@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package proyecto2progra2;
 
 import java.io.File;
@@ -22,130 +17,145 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-/**
- *
- * @author maikel
- */
 public class Proyecto2Progra2 extends Application {
 
     private final int WIDTH = 800;
     private final int HEIGHT = 600;
-    private ScrollPane scrollPane1, scrollPane2;
+    private ScrollPane scrollPaneImage, scrollPaneMosaic;
     private Pane pane;
     private Scene scene;
-    private Canvas canvas1,canvas2;
-    private final int rows = 30; //You should decide the values for rows and cols variables
-    private final int cols = 30;
+    private Canvas canvasImage, canvasMosaic;
+    private final int rows = 4; //You should decide the values for rows and cols variables
+    private final int cols = 4;
+    private int tamanoMatrizDestino = rows; // PEDIR AL USUARIO
     private final int chunks = rows * cols;
+    private int chunkWidth = 0, chunkHeight = 0;
 
     @Override
     public void start(Stage primaryStage) {
         FileChooser fileChooser = new FileChooser();
         this.pane = new Pane();
-        
+
         this.scene = new Scene(this.pane, WIDTH, HEIGHT);
-        
-        this.scrollPane1=new ScrollPane();
-        this.scrollPane2=new ScrollPane();
-        
-        this.canvas1 = new Canvas();
-        this.canvas2=new Canvas(400,400);
-        
-        this.scrollPane1.setContent(this.canvas1);
-        this.scrollPane2.setContent(this.canvas2);
-        
-        this.scrollPane1.setPrefSize(300, 300);
-        this.scrollPane2.setPrefSize(300, 300);
-        
-        this.scrollPane2.relocate(500, 0);
-        
-        scrollPane1.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        scrollPane1.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        
-        scrollPane2.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        scrollPane2.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        
-        this.canvas1.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+        this.scrollPaneImage = new ScrollPane();
+        this.scrollPaneMosaic = new ScrollPane();
+
+        this.canvasImage = new Canvas();
+        this.canvasMosaic = new Canvas(450, 400);
+
+        this.scrollPaneImage.setContent(this.canvasImage);
+        this.scrollPaneMosaic.setContent(this.canvasMosaic);
+
+        this.scrollPaneImage.setPrefSize(300, 400);
+        this.scrollPaneMosaic.setPrefSize(450, 400);
+
+        this.scrollPaneMosaic.relocate(350, 0);
+
+        this.scrollPaneImage.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        this.scrollPaneImage.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+
+        this.scrollPaneMosaic.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        this.scrollPaneMosaic.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+
+        this.canvasImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                System.out.println(event.getX()+" "+ event.getY());
-            }
+                System.out.println(event.getX() + " " + event.getY());
+            } // handle
         });
-        
-        Button btn = new Button();
-        Button btn1 = new Button("Borrar");
-        
-        btn1.relocate(200, 400);
-        btn.relocate(400, 400);
-        
-        GraphicsContext gc = this.canvas1.getGraphicsContext2D();
-        
-        btn.setText("Select an Image");
 
-        btn.setOnAction(new EventHandler<ActionEvent>() {
+        Button btnSelectImage = new Button("Select an Image");
+        Button btnDelete = new Button("Delete");
+        btnDelete.relocate(200, 450);
+        btnSelectImage.relocate(50, 450);
 
+        // BORRAR
+        Button btDrawLines = new Button("Draw");
+        btDrawLines.relocate(400, 450);
+        // BORRAR
+
+        GraphicsContext gc = this.canvasImage.getGraphicsContext2D();
+
+        btnSelectImage.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                
                 File selectedDirectory = fileChooser.showOpenDialog(primaryStage);
                 if (selectedDirectory != null) {
                     Image image = new Image(selectedDirectory.toURI().toString());
-
-                    canvas1.setHeight(image.getHeight()+rows*10.5);
-                    canvas1.setWidth(image.getWidth()+cols*10.5);
-
+                    canvasImage.setHeight(image.getHeight() + rows * 10.5);
+                    canvasImage.setWidth(image.getWidth() + cols * 10.5);
                     imageChuncks(image, gc);
-                }
-
-            }
+                } // if
+            } // handle
         });
-        btn1.setOnAction(new EventHandler<ActionEvent>() {
+        btnDelete.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                gc.clearRect(0, 0, canvas1.getWidth(), canvas1.getHeight());
+                gc.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
+            } // handle
+        });
+
+        GraphicsContext gc1 = this.canvasMosaic.getGraphicsContext2D();
+        btDrawLines.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                drawGrid(gc1);
             }
         });
 
-        this.pane.getChildren().add(this.scrollPane1);
-        this.pane.getChildren().add(this.scrollPane2);
-        this.pane.getChildren().add(btn);
-        this.pane.getChildren().add(btn1);
+        this.pane.getChildren().add(this.scrollPaneImage);
+        this.pane.getChildren().add(this.scrollPaneMosaic);
+        this.pane.getChildren().add(btnSelectImage);
+        this.pane.getChildren().add(btnDelete);
 
-        primaryStage.setTitle("Hello World!");
-        primaryStage.setScene(scene);
+        // BORRAR
+        this.pane.getChildren().add(btDrawLines);
+        // BORRAR
+
+        primaryStage.setTitle("MosaicMaker");
+        primaryStage.setScene(this.scene);
         primaryStage.show();
-    }
+    } // start
 
     public void imageChuncks(Image image, GraphicsContext gc) {
-        int chunkWidth = (int) image.getWidth() / cols; // determines the chunk width and height
-        int chunkHeight = (int) image.getHeight() / rows;
+        this.chunkWidth = (int) image.getWidth() / this.cols; // determines the chunk width and height
+        this.chunkHeight = (int) image.getHeight() / this.rows;
         int count = 0;
 
         PixelReader px = image.getPixelReader();
-        Image im[] = new Image[chunks];
-        for (int x = 0; x < rows; x++) {
-            for (int y = 0; y < cols; y++) {
+        Image im[] = new Image[this.chunks];
+        for (int x = 0; x < this.rows; x++) {
+            for (int y = 0; y < this.cols; y++) {
                 //Initialize the image array with image chunks
-                
-                WritableImage prueba = new WritableImage(px, (x * chunkWidth), (y * chunkHeight), chunkWidth, chunkHeight);
+                WritableImage prueba = new WritableImage(px, (x * this.chunkWidth), (y * this.chunkHeight), this.chunkWidth, this.chunkHeight);
                 Image image1 = (Image) prueba;
                 im[count] = image1;
-                
-                gc.drawImage(im[count], (chunkWidth * x) + (1 + x) * 10, (chunkHeight * y) + (1 + y) * 10);
+
+                gc.drawImage(im[count], (this.chunkWidth * x) + (1 + x) * 10, (this.chunkHeight * y) + (1 + y) * 10);
                 // draws the image chunk
                 count++;
-            }
-        }
-        
-    }
-    
-    
+            } // for y
+        } // for x
+    } // imageChuncks
 
-    /**
-     * @param args the command line arguments
-     */
+    public void drawGrid(GraphicsContext gc) {
+        this.canvasMosaic.setHeight(this.tamanoMatrizDestino*chunkHeight);
+        this.canvasMosaic.setWidth(this.tamanoMatrizDestino*chunkWidth);      
+        for (int x = 0; x < this.tamanoMatrizDestino; x++) {
+            gc.strokeLine(0, x * this.chunkHeight, this.chunkWidth * this.rows, x * this.chunkHeight); // rows
+            gc.strokeLine(x * this.chunkWidth, 0, x * this.chunkWidth, this.chunkHeight * this.cols); // cols
+        }
+    } // drawGrid
+
     public static void main(String[] args) {
         launch(args);
-    }
+    } // main
 
-}
+} // fin de la clase
+
+/* Revisar: al cargar una imagen relativamente pequeña no pinta bien la 
+cuadrícula, falla el calculo
+Hacer el repaint o bloquear el dibujo de la cuadrícula despues de haber elegido el tamaño
+VIDEO: https://www.youtube.com/watch?v=hIRuMY4_9zs
+*/
