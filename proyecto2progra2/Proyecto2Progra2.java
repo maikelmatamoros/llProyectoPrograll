@@ -13,7 +13,6 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
@@ -80,13 +79,13 @@ public class Proyecto2Progra2 extends Application {
                 File selectedDirectory = fileChooser.showOpenDialog(primaryStage);
                 if (selectedDirectory != null) {
                     Image image = new Image(selectedDirectory.toURI().toString());
-<<<<<<< HEAD
+
                     canvas.setHeight(image.getHeight()+rows*10.5);
                     canvas.setWidth(image.getWidth()+cols*10.5);
-=======
+
                     canvas.setHeight(400);
                     canvas.setWidth(400);
->>>>>>> 68bb3c7ba4373255a20a9533b687e90deb5de8ff
+
                     imageChuncks(image, gc);
                 }
 
