@@ -30,10 +30,10 @@ public class Proyecto2Progra2 extends Application {
 
     private final int WIDTH = 800;
     private final int HEIGHT = 600;
-    private ScrollPane scrollPane;
+    private ScrollPane scrollPane1, scrollPane2;
     private Pane pane;
     private Scene scene;
-    private Canvas canvas;
+    private Canvas canvas1,canvas2;
     private final int rows = 30; //You should decide the values for rows and cols variables
     private final int cols = 30;
     private final int chunks = rows * cols;
@@ -42,19 +42,30 @@ public class Proyecto2Progra2 extends Application {
     public void start(Stage primaryStage) {
         FileChooser fileChooser = new FileChooser();
         this.pane = new Pane();
+        
         this.scene = new Scene(this.pane, WIDTH, HEIGHT);
-        this.scrollPane=new ScrollPane();
-        this.canvas = new Canvas();
-        this.scrollPane.setContent(this.canvas);
-        this.scrollPane.setPrefSize(400, 400);
-        scrollPane.setPrefSize(300, 300);
-         // Always show vertical scroll bar
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         
-        // Horizontal scroll bar is only displayed when needed
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        this.scrollPane1=new ScrollPane();
+        this.scrollPane2=new ScrollPane();
         
-        this.canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        this.canvas1 = new Canvas();
+        this.canvas2=new Canvas(400,400);
+        
+        this.scrollPane1.setContent(this.canvas1);
+        this.scrollPane2.setContent(this.canvas2);
+        
+        this.scrollPane1.setPrefSize(300, 300);
+        this.scrollPane2.setPrefSize(300, 300);
+        
+        this.scrollPane2.relocate(500, 0);
+        
+        scrollPane1.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane1.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        
+        scrollPane2.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane2.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        
+        this.canvas1.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println(event.getX()+" "+ event.getY());
@@ -67,7 +78,7 @@ public class Proyecto2Progra2 extends Application {
         btn1.relocate(200, 400);
         btn.relocate(400, 400);
         
-        GraphicsContext gc = this.canvas.getGraphicsContext2D();
+        GraphicsContext gc = this.canvas1.getGraphicsContext2D();
         
         btn.setText("Select an Image");
 
@@ -80,11 +91,8 @@ public class Proyecto2Progra2 extends Application {
                 if (selectedDirectory != null) {
                     Image image = new Image(selectedDirectory.toURI().toString());
 
-                    canvas.setHeight(image.getHeight()+rows*10.5);
-                    canvas.setWidth(image.getWidth()+cols*10.5);
-
-                    canvas.setHeight(400);
-                    canvas.setWidth(400);
+                    canvas1.setHeight(image.getHeight()+rows*10.5);
+                    canvas1.setWidth(image.getWidth()+cols*10.5);
 
                     imageChuncks(image, gc);
                 }
@@ -94,11 +102,12 @@ public class Proyecto2Progra2 extends Application {
         btn1.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+                gc.clearRect(0, 0, canvas1.getWidth(), canvas1.getHeight());
             }
         });
 
-        this.pane.getChildren().add(this.scrollPane);
+        this.pane.getChildren().add(this.scrollPane1);
+        this.pane.getChildren().add(this.scrollPane2);
         this.pane.getChildren().add(btn);
         this.pane.getChildren().add(btn1);
 
