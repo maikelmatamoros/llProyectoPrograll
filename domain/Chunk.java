@@ -5,6 +5,7 @@
  */
 package domain;
 
+import java.io.Serializable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
@@ -12,7 +13,7 @@ import javafx.scene.image.Image;
  *
  * @author maikel
  */
-public class Chunk {
+public class Chunk implements Serializable{
     private Image image;
     private int x,y;
     private int chunkWidth,chunkHeight;
@@ -76,6 +77,11 @@ public class Chunk {
         }
         return false;
     } // mousePresionado
+
+    @Override
+    public String toString() {
+        return "Chunk{" + "x=" + x + ", y=" + y + ", chunkWidth=" + chunkWidth + ", chunkHeight=" + chunkHeight + '}';
+    }
     
 
     

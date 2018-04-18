@@ -5,6 +5,7 @@
  */
 package domain;
 
+import java.io.Serializable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import sun.java2d.pipe.DrawImage;
@@ -13,7 +14,7 @@ import sun.java2d.pipe.DrawImage;
  *
  * @author maikel
  */
-public class MosaicChunk {
+public class MosaicChunk implements Serializable{
 
     private int x, y;
     private int size;
@@ -69,4 +70,11 @@ public class MosaicChunk {
         }
         return false;
     } // mousePresionado
+
+    @Override
+    public String toString() {
+        return "MosaicChunk{" + "x=" + x + ", y=" + y + ", size=" + size + '}';
+    }
+    
+    
 }
