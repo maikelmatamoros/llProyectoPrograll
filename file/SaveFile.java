@@ -6,7 +6,6 @@
 package file;
 
 import domain.Chunk;
-import domain.MosaicChunk;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,30 +27,26 @@ public class SaveFile {
         this.path = "save.dat";
     } // constructor
 
-    public void save(Chunk[][] matrizChunks, MosaicChunk[][] matrizMosaicChunkses) throws IOException, ClassNotFoundException {
+    public void save(Chunk[][] matrizChunks, Chunk[][] matrizMosaicChunkses) throws IOException, ClassNotFoundException {
         File file = new File(this.path);
-        List<ArrayList> previous = new ArrayList<ArrayList>();
-        ArrayList<Chunk[][]> chunksAL = new ArrayList<>();
-        ArrayList<MosaicChunk[][]> mosaicChunksAL = new ArrayList<>();
-        chunksAL.add(matrizChunks);
-        mosaicChunksAL.add(matrizMosaicChunkses);
-        previous.add(chunksAL);
-        previous.add(mosaicChunksAL);
+        List<Chunk[][]> previous = new ArrayList<>();
+        previous.add(matrizChunks);
+        previous.add(matrizMosaicChunkses);
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(file));
         objectOutputStream.writeUnshared(previous);
         objectOutputStream.close();
     } // save
 
-    public List<ArrayList> recover() throws IOException, ClassNotFoundException {
+    public List<Chunk[][]> recover() throws IOException, ClassNotFoundException {
         File myFile = new File(this.path);
-        List<ArrayList> previous = new ArrayList<>();
+        List<Chunk[][]> previous = new ArrayList<>();
         if (myFile.exists()) {
             ObjectInputStream objectInputStream
                     = new ObjectInputStream(
                             new FileInputStream(myFile)
                     );
             Object aux = objectInputStream.readObject();
-            previous = (List<ArrayList>) aux;
+            previous = (List<Chunk[][]>) aux;
             objectInputStream.close();
         } // if(myFile.exists())
         return previous;
