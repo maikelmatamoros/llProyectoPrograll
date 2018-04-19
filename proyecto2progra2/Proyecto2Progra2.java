@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -19,7 +20,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Transform;
@@ -41,10 +41,22 @@ public class Proyecto2Progra2 extends Application {
     private int i, j;
     private Chunk chunksVec[][];
     private Chunk mosaicVec[][];
+    private int size;
+    private GraphicsContext gc, gcM;
+    private int k;
+    private int l;
+    private Button btnSelectImage, btDrawLines, save;
+    private FileChooser fileChooser;
 
     @Override
     public void start(Stage primaryStage) {
-        FileChooser fileChooser = new FileChooser();
+        primaryStage.setTitle("MosaicMaker");
+        initComponents(primaryStage);
+        primaryStage.show();
+    } // start
+
+    private void initComponents(Stage primaryStage) {
+        this.fileChooser = new FileChooser();
         this.pane = new Pane();
         size = 100;
         this.scene = new Scene(this.pane, WIDTH, HEIGHT);
@@ -69,151 +81,37 @@ public class Proyecto2Progra2 extends Application {
         this.scrollPaneMosaic.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         this.scrollPaneMosaic.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
-        this.canvasImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (chunksVec[0][0] == null) {
-                    System.out.println("Ingrese una imagen primero");
-                } else {
+        this.canvasImage.setOnMouseClicked(canvasClickEvent);
+        this.canvasMosaic.setOnMouseClicked(canvasClickEvent);
 
-                    for (int x = 0; x < rows; x++) {
-                        for (int y = 0; y < cols; y++) {
-                            if (chunksVec[x][y].chunckImageClicked((int) event.getX(), (int) event.getY())) {
-                                i = x;
-                                j = y;
-                                break;
-                            }
-                        }
-                    }
-                }
-                //System.out.println(event.getX() + " " + event.getY());
+        this.gcM = this.canvasMosaic.getGraphicsContext2D();
+        this.gc = this.canvasImage.getGraphicsContext2D();
 
-            } // handle
-        }
-        );
-        GraphicsContext gcM = this.canvasMosaic.getGraphicsContext2D();
-        this.canvasMosaic.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            int k;
-            int l;
-
-            @Override
-            public void handle(MouseEvent event) {
-                for (int x = 0; x < rows; x++) {
-                    for (int y = 0; y < cols; y++) {
-                        if (mosaicVec[x][y].chunckMosaicClicked((int) event.getX(), (int) event.getY())) {
-                            k = x;
-                            l = y;
-                            break;
-                        }
-                    }
-                }
-                mosaicVec[k][l].setImageBytes(chunksVec[i][j].getImageBytes());
-                try {
-                    mosaicVec[k][l].draw(gcM, 1);
-                } catch (IOException ex) {
-                    Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-
-        Button btnSelectImage = new Button("Select an Image");
-        Button btnDelete = new Button("Delete");
-        Button save = new Button("Save");
+        btnSelectImage = new Button("Select an Image");
+        save = new Button("Save");
+        btDrawLines = new Button("Draw");
 
         save.relocate(300, 450);
-        btnDelete.relocate(
-                200, 450);
-        btnSelectImage.relocate(
-                50, 450);
+        btnSelectImage.relocate(50, 450);
+        btDrawLines.relocate(400, 450);
 
-        // BORRAR
-        Button btDrawLines = new Button("Draw");
-
-        btDrawLines.relocate(
-                400, 450);
-        // BORRAR
-        pane.setOnDragDropped(new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent event) {
-                System.out.println("Dejó");
-            }
-        });
-        GraphicsContext gc = this.canvasImage.getGraphicsContext2D();
-
-        btnSelectImage.setOnAction(
-                new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event
-            ) {
-                File selectedDirectory = fileChooser.showOpenDialog(primaryStage);
-                if (selectedDirectory != null) {
-                    try {
-                        System.out.println(selectedDirectory.getPath());
-                        BufferedImage image = ImageIO.read(selectedDirectory);
-                        canvasImage.setHeight(image.getHeight() + rows * 10.5);
-                        canvasImage.setWidth(image.getWidth() + cols * 10.5);
-                        imageChuncks(image, gc);
-                    } // if
-                    catch (IOException ex) {
-                        Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            } // handle
-        }
-        );
-        btnDelete.setOnAction(
-                new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event
-            ) {
-                gc.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
-            } // handle
-        }
-        );
-
-        btDrawLines.setOnAction(
-                new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event
-            ) {
-                drawGrid(gcM);
-            }
-        }
-        );
-
-        save.setOnAction(new EventHandler<ActionEvent>() {
+        btnSelectImage.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                WritableImage wim = new WritableImage((int) Math.round(canvasMosaic.getWidth()), (int) Math.round(canvasMosaic.getHeight()));
-                SnapshotParameters snapshotParameters = new SnapshotParameters();
-                snapshotParameters.setTransform(Transform.scale(8, 8));
-                canvasMosaic.snapshot(null, wim);
-                File file = new File("Canvas Screenshot");
-                try {
-
-                    ImageIO.write(SwingFXUtils.fromFXImage(wim, null), "png", file);
-                } catch (IOException ex) {
-                    Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                selectAndSplitImage(primaryStage, gc);
             }
         });
+        btDrawLines.setOnAction(buttonsEvents);
+        save.setOnAction(buttonsEvents);
 
-        this.pane.getChildren()
-                .add(this.scrollPaneImage);
+        this.pane.getChildren().add(this.scrollPaneImage);
 
-        this.pane.getChildren()
-                .add(this.scrollPaneMosaic);
+        this.pane.getChildren().add(this.scrollPaneMosaic);
 
-        this.pane.getChildren()
-                .add(btnSelectImage);
+        this.pane.getChildren().add(btnSelectImage);
 
-        this.pane.getChildren()
-                .add(btnDelete);
+        this.pane.getChildren().add(btDrawLines);
 
-        // BORRAR
-        this.pane.getChildren()
-                .add(btDrawLines);
-        // BORRAR
         this.pane.getChildren().add(save);
 
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -236,28 +134,28 @@ public class Proyecto2Progra2 extends Application {
 
                 try {
                     SaveFile save = new SaveFile();
-
-                    chunksVec = save.recover().get(0);
+                    List<Chunk[][]> list = save.recover();
+                    chunksVec = list.get(0);
                     rows = chunksVec.length;
                     cols = chunksVec[0].length;
                     canvasImage.setHeight((rows) * size + ((rows + 1) * 10));
                     canvasImage.setWidth((cols) * size + ((cols + 1) * 10));
                     canvasMosaic.setHeight(rows * size);
                     canvasMosaic.setWidth(cols * size);
-
-                    mosaicVec = save.recover().get(1);
-                    System.err.println(mosaicVec.length);
+                    mosaicVec = list.get(1);
                     drawGrid(gcM);
                     for (int x = 0; x < rows; x++) {
                         for (int y = 0; y < cols; y++) {
                             chunksVec[x][y].draw(gc, 0);
-                            if(mosaicVec[x][y].getImageBytes()!=null){
+                            System.out.println(mosaicVec[x][y].getImageBytes().length);
+                            if (mosaicVec[x][y].getImageBytes().length != 0) {
+
                                 mosaicVec[x][y].draw(gcM, 1);
                             }
-                            
 
                         }
                     }
+
                 } catch (IOException ex) {
                     Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (ClassNotFoundException ex) {
@@ -266,16 +164,97 @@ public class Proyecto2Progra2 extends Application {
             }
         });
 
-        primaryStage.setTitle(
-                "MosaicMaker");
         primaryStage.setScene(
                 this.scene);
-        primaryStage.show();
-    } // start
-    private int size;
 
-    public void drawAfterClose() {
+    }
 
+    EventHandler<MouseEvent> canvasClickEvent = new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+            if (event.getSource() == canvasImage) {
+                selectAChunck((int) event.getX(), (int) event.getY());
+            } else if (event.getSource() == canvasMosaic) {
+                paintInMosaic((int) event.getX(), (int) event.getY());
+            }
+        }
+    };
+
+    private void selectAChunck(int xP, int yP) {
+        if (chunksVec[0][0] == null) {
+            System.out.println("Ingrese una imagen primero");
+        } else {
+
+            for (int x = 0; x < rows; x++) {
+                for (int y = 0; y < cols; y++) {
+                    if (chunksVec[x][y].chunckImageClicked(xP, yP)) {
+                        i = x;
+                        j = y;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void paintInMosaic(int xP, int yP) {
+
+        for (int x = 0; x < rows; x++) {
+            for (int y = 0; y < cols; y++) {
+                if (mosaicVec[x][y].chunckMosaicClicked(xP, yP)) {
+                    k = x;
+                    l = y;
+                    break;
+                }
+            }
+        }
+        mosaicVec[k][l].setImageBytes(chunksVec[i][j].getImageBytes());
+        try {
+            mosaicVec[k][l].draw(gcM, 1);
+        } catch (IOException ex) {
+            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    EventHandler<ActionEvent> buttonsEvents = new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+            if (event.getSource() == btDrawLines) {
+                drawGrid(gcM);
+            } else if (event.getSource() == save) {
+                saveMosaic();
+            }
+        }
+    };
+
+    private void selectAndSplitImage(Stage primaryStage, GraphicsContext gc) {
+        gc.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
+        File selectedDirectory = fileChooser.showOpenDialog(primaryStage);
+        if (selectedDirectory != null) {
+            try {
+                BufferedImage image = ImageIO.read(selectedDirectory);
+                canvasImage.setHeight(image.getHeight() + rows * 10.5);
+                canvasImage.setWidth(image.getWidth() + cols * 10.5);
+                imageChuncks(image, gc);
+            } // if
+            catch (IOException ex) {
+                Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void saveMosaic() {
+        WritableImage wim = new WritableImage((int) Math.round(canvasMosaic.getWidth()), (int) Math.round(canvasMosaic.getHeight()));
+        SnapshotParameters snapshotParameters = new SnapshotParameters();
+        snapshotParameters.setTransform(Transform.scale(8, 8));
+        canvasMosaic.snapshot(null, wim);
+        File file = new File("Canvas Screenshot");
+        try {
+
+            ImageIO.write(SwingFXUtils.fromFXImage(wim, null), "png", file);
+        } catch (IOException ex) {
+            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void imageChuncks(BufferedImage image, GraphicsContext gc) {
@@ -309,13 +288,13 @@ public class Proyecto2Progra2 extends Application {
         this.mosaicVec = new Chunk[rows][cols];
         for (int x = 0; x < this.rows; x++) {
             for (int y = 0; y < this.cols; y++) {
-                this.mosaicVec[x][y] = new Chunk(null, x, y, size);
+                this.mosaicVec[x][y] = new Chunk(new byte[0], x, y, size);
             }
         }
     }
 
     public void drawGrid(GraphicsContext gc) {
-        initMosiacChunks();
+        //initMosiacChunks();
         this.canvasMosaic.setHeight(this.rows * size);
         this.canvasMosaic.setWidth(this.cols * size);
 

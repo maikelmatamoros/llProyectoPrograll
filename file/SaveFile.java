@@ -28,6 +28,7 @@ public class SaveFile {
     } // constructor
 
     public void save(Chunk[][] matrizChunks, Chunk[][] matrizMosaicChunkses) throws IOException, ClassNotFoundException {
+        //System.out.println(matrizChunks[0][0].getImageBytes().length);
         File file = new File(this.path);
         List<Chunk[][]> previous = new ArrayList<>();
         previous.add(matrizChunks);
@@ -49,6 +50,7 @@ public class SaveFile {
             previous = (List<Chunk[][]>) aux;
             objectInputStream.close();
         } // if(myFile.exists())
+        //System.out.println(previous.get(1)[0][0].getImageBytes().length);
         return previous;
     } // recover
 
