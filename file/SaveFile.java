@@ -54,4 +54,11 @@ public class SaveFile {
         return previous;
     } // recover
 
+    public void newProyect(){
+        File file=new File(path);
+        if(file.exists()){
+            file.delete();
+        }
+    }
+    
 } // fin de la clase
