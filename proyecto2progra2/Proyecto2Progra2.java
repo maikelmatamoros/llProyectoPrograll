@@ -4,6 +4,7 @@ import business.Gestor;
 
 import domain.ChunkMosaic;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -12,7 +13,10 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -116,7 +120,9 @@ public class Proyecto2Progra2 extends Application {
         btnSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+
                 gestor.exportMosaic(primaryStage, graphicContextMosaic, canvasMosaic, fileChooser);
+
             }
         });
 
@@ -146,7 +152,16 @@ public class Proyecto2Progra2 extends Application {
             @Override
             public void handle(WindowEvent event) {
                 try {
-                    gestor.save();
+                    ButtonType confirm=new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
+                    ButtonType cancel=new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+                    Alert alert=new Alert(Alert.AlertType.CONFIRMATION, "", confirm,cancel);
+                    alert.setTitle("Confirm");
+                    alert.setContentText("Do you wanna save?");
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if(result.isPresent() && result.get()==confirm){
+                        gestor.save();
+                    }
+                    
                 } catch (IOException | ClassNotFoundException ex) {
                     Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -184,12 +199,12 @@ public class Proyecto2Progra2 extends Application {
             } else if (event.getSource() == canvasImage) {
                 gestor.selectAChunckImage((int) event.getX(), (int) event.getY());
             } else if (event.getSource() == canvasMosaic && event.getButton() == MouseButton.PRIMARY) {
-                gestor.paintInMosaic((int) event.getX(), (int) event.getY(),graphicContextMosaic);
+                gestor.paintInMosaic((int) event.getX(), (int) event.getY(), graphicContextMosaic);
             } else if (event.getSource() == canvasMosaic && event.getButton() == MouseButton.SECONDARY) {
                 gestor.selectAMosaic((int) event.getX(), (int) event.getY());
-                graphicContextMosaic.clearRect(0, 0, canvasMosaic.getWidth(),canvasMosaic.getHeight());
+                graphicContextMosaic.clearRect(0, 0, canvasMosaic.getWidth(), canvasMosaic.getHeight());
                 ((ChunkMosaic) gestor.getMosaicChunk()).setImageBytes(new byte[0]);
-                gestor.drawGrid(graphicContextMosaic,canvasMosaic);
+                gestor.drawGrid(graphicContextMosaic, canvasMosaic);
                 gestor.repaintMosaic(graphicContextMosaic);
             }
         }
@@ -201,7 +216,7 @@ public class Proyecto2Progra2 extends Application {
             if (event.getSource() == btDrawLines) {
                 gestor.setMosaicsParameters(Integer.parseInt(tfMosaicCanvasHeight.getText()),
                         Integer.parseInt(tfMosaicCanvasWidth.getText()));
-                gestor.drawGrid(graphicContextMosaic,canvasMosaic);
+                gestor.drawGrid(graphicContextMosaic, canvasMosaic);
                 gestor.initMosiacChunks();
             } else if (event.getSource() == btnNewProyect) {
                 gestor.newProyect();
@@ -211,7 +226,7 @@ public class Proyecto2Progra2 extends Application {
                 if (tfImageChunkSize.getText().equals("")) {
                     System.out.println("Select a size before make a split");
                 } else {
-                    gestor.setSize( Integer.parseInt(tfImageChunkSize.getText()));
+                    gestor.setSize(Integer.parseInt(tfImageChunkSize.getText()));
                     gestor.imageChuncks(graphicContextImage, canvasImage);
                 }
 
@@ -219,9 +234,7 @@ public class Proyecto2Progra2 extends Application {
         }
     };
 
-
-
-public static void main(String[] args) {
+    public static void main(String[] args) {
         launch(args);
     } // main
 

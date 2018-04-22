@@ -37,7 +37,8 @@ public class Gestor {
 
     private Chunk[][] chunkImage;
     private Chunk[][] chunkMosaic;
-    private int size, rowsImage, colsImage, rowsMosaic, colsMosaic, k, l, i, j;
+    private int size, rowsMosaic, colsMosaic = 0;
+    private int rowsImage, colsImage, k, l, i, j;
     private BufferedImage image;
     private boolean rotAccess = false;
 
@@ -93,17 +94,20 @@ public class Gestor {
 
     public void drawGrid(GraphicsContext gcM, Canvas canvasMosaic) {
         //initMosiacChunks();
-        canvasMosaic.setHeight(this.rowsMosaic * size);
-        canvasMosaic.setWidth(this.colsMosaic * size);
+        if (size > 0 && rowsMosaic>0 && colsMosaic>0) {
+            canvasMosaic.setHeight(this.rowsMosaic * size);
+            canvasMosaic.setWidth(this.colsMosaic * size);
 
-        for (int x = 0; x <= this.rowsMosaic; x++) {
+            for (int x = 0; x <= this.rowsMosaic; x++) {
 
-            gcM.strokeLine(0, x * size, colsMosaic * size, x * size); // rows
+                gcM.strokeLine(0, x * size, colsMosaic * size, x * size); // rows
+            }
+            for (int y = 0; y <= this.colsMosaic; y++) {
+
+                gcM.strokeLine(y * size, 0, y * size, size * this.rowsMosaic); // cols
+            }
         }
-        for (int y = 0; y <= this.colsMosaic; y++) {
 
-            gcM.strokeLine(y * size, 0, y * size, size * this.rowsMosaic); // cols
-        }
     } // drawGrid
 
     public byte[] imageToBytes(BufferedImage image) throws IOException {
@@ -122,7 +126,7 @@ public class Gestor {
     }
 
     public void imageChuncks(GraphicsContext gc, Canvas canvasImage) {
-        
+
         gc.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
         this.rowsImage = (int) (image.getHeight() / size);
         this.colsImage = (int) (image.getWidth() / size); // determines the chunk width and height
@@ -190,7 +194,6 @@ public class Gestor {
         repaintMosaic(gcM);
         File file = fileChooser.showSaveDialog(primaryStage);
         try {
-
             ImageIO.write(SwingFXUtils.fromFXImage(wim, null), "png", file);
         } catch (IOException ex) {
             Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
@@ -269,12 +272,12 @@ public class Gestor {
     }
 
     public void setMosaicsParameters(int rows, int cols) {
-        this.rowsMosaic=rows/size;
-        this.colsMosaic=cols/size;
+        this.rowsMosaic = rows / size;
+        this.colsMosaic = cols / size;
 
     }
-    
+
     public void setSize(int size) {
         this.size = size;
-}
+    }
 }
