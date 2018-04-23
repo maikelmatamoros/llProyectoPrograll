@@ -31,6 +31,10 @@ public class ChunkMosaic extends Chunk {
         }
     } // rotate
 
+    public void setRotation() {
+        this.rotation = 0;
+    } // setRotation
+
     @Override
     public void draw(GraphicsContext gc) throws IOException {
         ImageView imageView = new ImageView(SwingFXUtils.toFXImage(bytesToImage(), null));

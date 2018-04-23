@@ -17,6 +17,10 @@ public class Button {
         this.h = h;
     } // constructor
 
+    public void setPath(String path) {
+        this.path = path;
+    } // setPath
+
     public void draw(GraphicsContext gc) throws IOException {
         gc.drawImage(new Image(path), x, y, w, h);
     } // draw

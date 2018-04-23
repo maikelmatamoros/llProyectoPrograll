@@ -33,9 +33,13 @@ public class Gestor {
     private BufferedImage image;
     private boolean rotAccess = false;
 
-    public void available(boolean state) {
-        this.rotAccess = state;
+    public void available() {
+        this.rotAccess = !rotAccess;
     } // available
+    
+    public boolean isRotateAvaible(){
+        return this.rotAccess;
+    } // isRotableAvaible
 
     public boolean getAcces() {
         return this.rotAccess;
@@ -218,6 +222,7 @@ public class Gestor {
 
     public void paintInMosaic(int xP, int yP, GraphicsContext gcM) {
         selectAMosaic(xP, yP);
+        ((ChunkMosaic)chunkMosaic[k][l]).setRotation();
         chunkMosaic[k][l].setImageBytes(chunkImage[i][j].getImageBytes());
         try {
             chunkMosaic[k][l].draw(gcM);
@@ -233,10 +238,6 @@ public class Gestor {
     public List<Chunk[][]> recover() throws IOException, ClassNotFoundException {
         return new SaveFile().recover();
     } // recover
-
-    public void newProyect() {
-        new SaveFile().newProyect();
-    } // newProyect
 
     public Chunk getMosaicChunk() {
         return this.chunkMosaic[k][l];

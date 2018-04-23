@@ -120,9 +120,24 @@ public class Proyecto2Progra2 extends Application {
                         gestor.drawGrid(graphicContextMosaic, canvasMosaic);
                         gestor.initMosiacChunks();
                     } else if (btnNewProyect.isClicked((int) e.getX(), (int) e.getY())) {
-                        gestor.newProyect();
+                        gestor.newProyect(tfImageChunkSize, tfMosaicCanvasWidth, tfMosaicCanvasHeight, canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic);
                     } else if (btnRotate.isClicked((int) e.getX(), (int) e.getY())) {
-                        gestor.available(true);
+                        gestor.available();
+                        if(gestor.isRotateAvaible()){
+                            btnRotate.setPath("/assets/rotateTrue.png");
+                            try {
+                                btnRotate.draw(graphicsContextUtilities);
+                            } catch (IOException ex) {
+                                Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }else{
+                            btnRotate.setPath("/assets/rotate.png");
+                            try {
+                                btnRotate.draw(graphicsContextUtilities);
+                            } catch (IOException ex) {
+                                Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
                     } else if (btnSplit.isClicked((int) e.getX(), (int) e.getY())) {
                         if (tfImageChunkSize.getText().equals("")) {
                             System.out.println("Select a size before make a split");
@@ -139,7 +154,7 @@ public class Proyecto2Progra2 extends Application {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode() == KeyCode.C) {
-                    gestor.available(false);
+//                    gestor.available(false);
                 }
             }
         });
@@ -193,7 +208,7 @@ public class Proyecto2Progra2 extends Application {
     EventHandler<MouseEvent> canvasClickEvent = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
-            if (gestor.getAcces()) {
+            if (gestor.getAcces() && event.getSource() == canvasMosaic) {
                 gestor.selectAMosaic((int) event.getX(), (int) event.getY());
                 if (gestor.getMosaicChunk().getImageBytes().length != 0) {
                     if (event.getButton() == MouseButton.PRIMARY) {
