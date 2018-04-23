@@ -1,7 +1,7 @@
 package proyecto2progra2;
 
 import business.Gestor;
-
+import domain.Button;
 import domain.ChunkMosaic;
 import java.io.IOException;
 import java.util.Optional;
@@ -14,11 +14,11 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -35,19 +35,19 @@ public class Proyecto2Progra2 extends Application {
     private ScrollPane scrollPaneImage, scrollPaneMosaic;
     private Pane pane;
     private Scene scene;
-    private Canvas canvasImage, canvasMosaic;
-    private GraphicsContext graphicContextImage, graphicContextMosaic;
-    private Button btnSelectImage, btDrawLines, btnSave, btnNewProyect, btnRotate, btnSplit;
+    private Canvas canvasImage, canvasMosaic, canvasUtilities;
+    private GraphicsContext graphicContextImage, graphicContextMosaic, graphicsContextUtilities;
+    private domain.Button btnSelectImage, btDrawMosaic, btnSave, btnNewProyect, btnRotate, btnSplit;
     private FileChooser fileChooser;
     private TextField tfImageChunkSize, tfMosaicCanvasHeight, tfMosaicCanvasWidth;
     private Gestor gestor;
+    private EventHandler<MouseEvent> eventHandler;
 
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("MosaicMaker");
         this.gestor = new Gestor();
         initComponents(primaryStage);
-
         primaryStage.show();
     } // start
 
@@ -70,8 +70,23 @@ public class Proyecto2Progra2 extends Application {
         this.scrollPaneImage = new ScrollPane();
         this.scrollPaneMosaic = new ScrollPane();
 
+        this.btnSelectImage = new Button("/assets/selectAnImage.png", 20, 10, 180, 120);
+        this.btDrawMosaic = new Button("/assets/drawMosaic.png", 690, 10, 180, 120);
+        this.btnSplit = new Button("/assets/split.png", 200, 10, 180, 120);
+        this.btnRotate = new Button("/assets/rotate.png", 1050, 35, 70, 70);
+        this.btnSave = new Button("/assets/save.png", 1150, 35, 70, 70);
+        this.btnNewProyect = new Button("/assets/delete.png", 1250, 35, 70, 70);
+
         this.canvasImage = new Canvas();
         this.canvasMosaic = new Canvas();
+        this.canvasUtilities = new Canvas(1380, 320);
+        this.canvasUtilities.relocate(0, 400);
+        this.graphicsContextUtilities = this.canvasUtilities.getGraphicsContext2D();
+        try {
+            drawButtons(this.graphicsContextUtilities);
+        } catch (IOException ex) {
+            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         this.scrollPaneImage.setContent(this.canvasImage);
         this.scrollPaneMosaic.setContent(this.canvasMosaic);
@@ -87,58 +102,40 @@ public class Proyecto2Progra2 extends Application {
         this.scrollPaneMosaic.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         this.scrollPaneMosaic.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
-        this.canvasImage.setOnMouseClicked(canvasClickEvent);
-        this.canvasMosaic.setOnMouseClicked(canvasClickEvent);
+        this.canvasImage.setOnMouseClicked(this.canvasClickEvent);
+        this.canvasMosaic.setOnMouseClicked(this.canvasClickEvent);
 
         this.graphicContextMosaic = this.canvasMosaic.getGraphicsContext2D();
         this.graphicContextImage = this.canvasImage.getGraphicsContext2D();
 
-        btnSelectImage = new Button("Select an Image");
-        btnSave = new Button("Save");
-        btDrawLines = new Button("Draw Mosaic");
-        btnNewProyect = new Button("New Proyect");
-        btnRotate = new Button("Rotate");
-        btnSplit = new Button("Split");
-
-        btnSave.relocate(300, 450);
-        btnSelectImage.relocate(50, 450);
-        btDrawLines.relocate(400, 450);
-        btnNewProyect.relocate(600, 600);
-        btnRotate.relocate(500, 500);
-        btnSplit.relocate(130, 450);
-
-        btnSelectImage.setOnAction(new EventHandler<ActionEvent>() {
+        this.canvasUtilities.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(ActionEvent event) {
-                gestor.selectImage(primaryStage, graphicContextImage, fileChooser, canvasImage);
-            }
+            public void handle(MouseEvent e) {
+                if (e.getSource() == canvasUtilities) {
+                    if (btnSelectImage.isClicked((int) e.getX(), (int) e.getY())) {
+                        gestor.selectImage(primaryStage, graphicContextImage, fileChooser, canvasImage);
+                    } else if (btnSave.isClicked((int) e.getX(), (int) e.getY())) {
+                        gestor.exportMosaic(primaryStage, graphicContextMosaic, canvasMosaic, fileChooser);
+                    } else if (btDrawMosaic.isClicked((int) e.getX(), (int) e.getY())) {
+                        gestor.setMosaicsParameters(Integer.parseInt(tfMosaicCanvasHeight.getText()),
+                                Integer.parseInt(tfMosaicCanvasWidth.getText()));
+                        gestor.drawGrid(graphicContextMosaic, canvasMosaic);
+                        gestor.initMosiacChunks();
+                    } else if (btnNewProyect.isClicked((int) e.getX(), (int) e.getY())) {
+                        gestor.newProyect();
+                    } else if (btnRotate.isClicked((int) e.getX(), (int) e.getY())) {
+                        gestor.available(true);
+                    } else if (btnSplit.isClicked((int) e.getX(), (int) e.getY())) {
+                        if (tfImageChunkSize.getText().equals("")) {
+                            System.out.println("Select a size before make a split");
+                        } else {
+                            gestor.setSize(Integer.parseInt(tfImageChunkSize.getText()));
+                            gestor.imageChuncks(graphicContextImage, canvasImage);
+                        } // else
+                    } // else-if
+                } // if
+            } // handle
         });
-        btDrawLines.setOnAction(buttonsEvents);
-        btnNewProyect.setOnAction(buttonsEvents);
-        btnRotate.setOnAction(buttonsEvents);
-        btnSplit.setOnAction(buttonsEvents);
-        btnSave.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-
-                gestor.exportMosaic(primaryStage, graphicContextMosaic, canvasMosaic, fileChooser);
-
-            }
-        });
-
-        this.pane.getChildren().add(this.scrollPaneImage);
-        this.pane.getChildren().add(this.scrollPaneMosaic);
-
-        this.pane.getChildren().add(btnSelectImage);
-        this.pane.getChildren().add(btDrawLines);
-        this.pane.getChildren().add(btnSave);
-        this.pane.getChildren().add(btnNewProyect);
-        this.pane.getChildren().add(btnRotate);
-        this.pane.getChildren().add(btnSplit);
-
-        this.pane.getChildren().add(this.tfImageChunkSize);
-        this.pane.getChildren().add(this.tfMosaicCanvasHeight);
-        this.pane.getChildren().add(this.tfMosaicCanvasWidth);
 
         this.scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
@@ -148,20 +145,21 @@ public class Proyecto2Progra2 extends Application {
                 }
             }
         });
+
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
                 try {
-                    ButtonType confirm=new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
-                    ButtonType cancel=new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
-                    Alert alert=new Alert(Alert.AlertType.CONFIRMATION, "", confirm,cancel);
+                    ButtonType confirm = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
+                    ButtonType cancel = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", confirm, cancel);
                     alert.setTitle("Confirm");
                     alert.setContentText("Do you wanna save?");
                     Optional<ButtonType> result = alert.showAndWait();
-                    if(result.isPresent() && result.get()==confirm){
+                    if (result.isPresent() && result.get() == confirm) {
                         gestor.save();
                     }
-                    
+
                 } catch (IOException | ClassNotFoundException ex) {
                     Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -175,9 +173,24 @@ public class Proyecto2Progra2 extends Application {
             }
         });
 
+        this.pane.getChildren().add(this.scrollPaneImage);
+        this.pane.getChildren().add(this.scrollPaneMosaic);
+        this.pane.getChildren().add(this.canvasUtilities);
+        this.pane.getChildren().add(this.tfImageChunkSize);
+        this.pane.getChildren().add(this.tfMosaicCanvasHeight);
+        this.pane.getChildren().add(this.tfMosaicCanvasWidth);
         primaryStage.setScene(this.scene);
+    } // initComponents
 
-    }
+    private void drawButtons(GraphicsContext g) throws IOException {
+        g.drawImage(new Image("/assets/background.png"), 0, 0, 1380, 320);
+        this.btnSelectImage.draw(g);
+        this.btDrawMosaic.draw(g);
+        this.btnSplit.draw(g);
+        this.btnSave.draw(g);
+        this.btnNewProyect.draw(g);
+        this.btnRotate.draw(g);
+    } // drawButtons
 
     EventHandler<MouseEvent> canvasClickEvent = new EventHandler<MouseEvent>() {
         @Override
@@ -195,7 +208,7 @@ public class Proyecto2Progra2 extends Application {
                     } catch (IOException ex) {
                         Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                }
+                } // if
             } else if (event.getSource() == canvasImage) {
                 gestor.selectAChunckImage((int) event.getX(), (int) event.getY());
             } else if (event.getSource() == canvasMosaic && event.getButton() == MouseButton.PRIMARY) {
@@ -206,33 +219,9 @@ public class Proyecto2Progra2 extends Application {
                 ((ChunkMosaic) gestor.getMosaicChunk()).setImageBytes(new byte[0]);
                 gestor.drawGrid(graphicContextMosaic, canvasMosaic);
                 gestor.repaintMosaic(graphicContextMosaic);
-            }
-        }
-    };
-
-    EventHandler<ActionEvent> buttonsEvents = new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent event) {
-            if (event.getSource() == btDrawLines) {
-                gestor.setMosaicsParameters(Integer.parseInt(tfMosaicCanvasHeight.getText()),
-                        Integer.parseInt(tfMosaicCanvasWidth.getText()));
-                gestor.drawGrid(graphicContextMosaic, canvasMosaic);
-                gestor.initMosiacChunks();
-            } else if (event.getSource() == btnNewProyect) {
-                gestor.newProyect();
-            } else if (event.getSource() == btnRotate) {
-                gestor.available(true);
-            } else if (event.getSource() == btnSplit) {
-                if (tfImageChunkSize.getText().equals("")) {
-                    System.out.println("Select a size before make a split");
-                } else {
-                    gestor.setSize(Integer.parseInt(tfImageChunkSize.getText()));
-                    gestor.imageChuncks(graphicContextImage, canvasImage);
-                }
-
-            }
-        }
-    };
+            } // else-if
+        } // handle
+    }; // canvasClickEvent
 
     public static void main(String[] args) {
         launch(args);
