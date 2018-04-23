@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -41,7 +40,6 @@ public class Proyecto2Progra2 extends Application {
     private FileChooser fileChooser;
     private TextField tfImageChunkSize, tfMosaicCanvasHeight, tfMosaicCanvasWidth;
     private Gestor gestor;
-    private EventHandler<MouseEvent> eventHandler;
 
     @Override
     public void start(Stage primaryStage) {
@@ -172,7 +170,7 @@ public class Proyecto2Progra2 extends Application {
                 gestor.reinit(tfImageChunkSize, tfMosaicCanvasWidth, tfMosaicCanvasHeight, canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic);
             }
         });
-
+    
         this.pane.getChildren().add(this.scrollPaneImage);
         this.pane.getChildren().add(this.scrollPaneMosaic);
         this.pane.getChildren().add(this.canvasUtilities);

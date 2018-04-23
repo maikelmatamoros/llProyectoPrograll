@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package file;
 
 import domain.Chunk;
@@ -15,10 +10,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Yerlin Leal
- */
 public class SaveFile {
 
     private String path;
@@ -28,7 +19,6 @@ public class SaveFile {
     } // constructor
 
     public void save(Chunk[][] matrizChunks, Chunk[][] matrizMosaicChunkses) throws IOException, ClassNotFoundException {
-        //System.out.println(matrizChunks[0][0].getImageBytes().length);
         File file = new File(this.path);
         List<Chunk[][]> previous = new ArrayList<>();
         previous.add(matrizChunks);
@@ -50,15 +40,14 @@ public class SaveFile {
             previous = (List<Chunk[][]>) aux;
             objectInputStream.close();
         } // if(myFile.exists())
-        //System.out.println(previous.get(1)[0][0].getImageBytes().length);
         return previous;
     } // recover
 
-    public void newProyect(){
-        File file=new File(path);
-        if(file.exists()){
+    public void newProyect() {
+        File file = new File(path);
+        if (file.exists()) {
             file.delete();
         }
-    }
-    
+    } // newProyect
+
 } // fin de la clase
