@@ -9,12 +9,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -22,6 +26,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -38,8 +43,9 @@ public class Proyecto2Progra2 extends Application {
     private GraphicsContext graphicContextImage, graphicContextMosaic, graphicsContextUtilities;
     private domain.Button btnSelectImage, btDrawMosaic, btnSave, btnNewProyect, btnRotate, btnSplit;
     private FileChooser fileChooser;
-    private TextField tfImageChunkSize, tfMosaicCanvasHeight, tfMosaicCanvasWidth;
     private Gestor gestor;
+    private boolean aux1 = false;
+    private boolean aux2 = false;
 
     @Override
     public void start(Stage primaryStage) {
@@ -52,17 +58,6 @@ public class Proyecto2Progra2 extends Application {
     private void initComponents(Stage primaryStage) {
         this.fileChooser = new FileChooser();
         this.pane = new Pane();
-        this.tfImageChunkSize = new TextField();
-        this.tfImageChunkSize.relocate(30, 550);
-        this.tfImageChunkSize.resize(100, 30);
-
-        this.tfMosaicCanvasHeight = new TextField();
-        this.tfMosaicCanvasHeight.relocate(450, 550);
-        this.tfMosaicCanvasHeight.resize(100, 30);
-        this.tfMosaicCanvasWidth = new TextField();
-        this.tfMosaicCanvasWidth.relocate(600, 550);
-        this.tfMosaicCanvasWidth.resize(100, 30);
-
         this.scene = new Scene(this.pane, WIDTH, HEIGHT);
 
         this.scrollPaneImage = new ScrollPane();
@@ -115,22 +110,22 @@ public class Proyecto2Progra2 extends Application {
                     } else if (btnSave.isClicked((int) e.getX(), (int) e.getY())) {
                         gestor.exportMosaic(primaryStage, graphicContextMosaic, canvasMosaic, fileChooser);
                     } else if (btDrawMosaic.isClicked((int) e.getX(), (int) e.getY())) {
-                        gestor.setMosaicsParameters(Integer.parseInt(tfMosaicCanvasHeight.getText()),
-                                Integer.parseInt(tfMosaicCanvasWidth.getText()));
-                        gestor.drawGrid(graphicContextMosaic, canvasMosaic);
-                        gestor.initMosiacChunks();
+                        if (!gestor.isDefinedValue()) {
+                            dialogWidthHeigth();
+                        }
+
                     } else if (btnNewProyect.isClicked((int) e.getX(), (int) e.getY())) {
-                        gestor.newProyect(tfImageChunkSize, tfMosaicCanvasWidth, tfMosaicCanvasHeight, canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic);
+                        gestor.newProyect(canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic);
                     } else if (btnRotate.isClicked((int) e.getX(), (int) e.getY())) {
                         gestor.available();
-                        if(gestor.isRotateAvaible()){
+                        if (gestor.isRotateAvaible()) {
                             btnRotate.setPath("/assets/rotateTrue.png");
                             try {
                                 btnRotate.draw(graphicsContextUtilities);
                             } catch (IOException ex) {
                                 Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                        }else{
+                        } else {
                             btnRotate.setPath("/assets/rotate.png");
                             try {
                                 btnRotate.draw(graphicsContextUtilities);
@@ -139,12 +134,12 @@ public class Proyecto2Progra2 extends Application {
                             }
                         }
                     } else if (btnSplit.isClicked((int) e.getX(), (int) e.getY())) {
-                        if (tfImageChunkSize.getText().equals("")) {
-                            System.out.println("Select a size before make a split");
+                        if (gestor.getSize() == 0) {
+                            dialogSize();
                         } else {
-                            gestor.setSize(Integer.parseInt(tfImageChunkSize.getText()));
                             gestor.imageChuncks(graphicContextImage, canvasImage);
-                        } // else
+                        }
+
                     } // else-if
                 } // if
             } // handle
@@ -182,16 +177,14 @@ public class Proyecto2Progra2 extends Application {
         primaryStage.setOnShown(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                gestor.reinit(tfImageChunkSize, tfMosaicCanvasWidth, tfMosaicCanvasHeight, canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic);
+                gestor.reinit(canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic);
             }
         });
-    
+
         this.pane.getChildren().add(this.scrollPaneImage);
         this.pane.getChildren().add(this.scrollPaneMosaic);
         this.pane.getChildren().add(this.canvasUtilities);
-        this.pane.getChildren().add(this.tfImageChunkSize);
-        this.pane.getChildren().add(this.tfMosaicCanvasHeight);
-        this.pane.getChildren().add(this.tfMosaicCanvasWidth);
+
         primaryStage.setScene(this.scene);
     } // initComponents
 
@@ -235,6 +228,106 @@ public class Proyecto2Progra2 extends Application {
             } // else-if
         } // handle
     }; // canvasClickEvent
+
+    public void dialogSize() {
+        // Create the custom dialog.
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Size Dialog");
+        dialog.setHeaderText("Please select a size beetwen 50 and 1680");
+
+         // Set the button types.
+        ButtonType confirmButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);
+
+        // Create the username and password labels and fields.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField size = new TextField();
+        size.setPromptText("Size");
+
+        grid.add(new Label("Size"), 0, 0);
+        grid.add(size, 1, 0);
+
+        // Enable/Disable login button depending on whether a username was entered.
+        Node loginButton = dialog.getDialogPane().lookupButton(confirmButtonType);
+        loginButton.setDisable(true);
+
+        // Do some validation (using the Java 8 lambda syntax).
+        size.textProperty().addListener((observable, oldValue, newValue) -> {
+            loginButton.setDisable(!(newValue.matches("\\d{1,4}") && Integer.parseInt(newValue) > 50 && Integer.parseInt(newValue) <= 1680));
+        });
+
+        dialog.getDialogPane().setContent(grid);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+
+        if (result.isPresent() && result.get() == confirmButtonType) {
+            gestor.setSize(Integer.parseInt(size.getText()));
+            gestor.imageChuncks(graphicContextImage, canvasImage);
+        }
+    }
+
+    public void dialogWidthHeigth() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Mosaic dimention Dialog");
+        dialog.setHeaderText("please write a width and a height between 50 and 1680");
+
+        ButtonType confirmButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField width = new TextField();
+        width.setPromptText("Width");
+        TextField heigth = new TextField();
+        heigth.setPromptText("Heigth");
+
+        grid.add(new Label("Width:"), 0, 0);
+        grid.add(width, 1, 0);
+        grid.add(new Label("Heigth:"), 0, 1);
+        grid.add(heigth, 1, 1);
+
+        Node loginButton = dialog.getDialogPane().lookupButton(confirmButtonType);
+        loginButton.setDisable(true);
+
+        width.textProperty().addListener((observable, oldValue, newValue) -> {
+            if ((newValue.matches("\\d{1,4}") && Integer.parseInt(newValue) > 50 && Integer.parseInt(newValue) <= 1680)) {
+                aux1 = true;
+            } else {
+                aux1 = false;
+            }
+            if (aux1 && aux2) {
+                loginButton.setDisable(false);
+            } else {
+                loginButton.setDisable(true);
+            }
+        });
+        heigth.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.matches("\\d{1,4}") && Integer.parseInt(newValue) > 50 && Integer.parseInt(newValue) <= 1680) {
+                aux2 = true;
+            } else {
+                aux2 = false;
+            }
+            if (aux1 && aux2) {
+                loginButton.setDisable(false);
+            } else {
+                loginButton.setDisable(true);
+            }
+        });
+        dialog.getDialogPane().setContent(grid);
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == confirmButtonType) {
+            gestor.setMosaicsParameters(Integer.parseInt(width.getText()), Integer.parseInt(heigth.getText()));
+            gestor.drawGrid(graphicContextMosaic, canvasMosaic);
+            gestor.initMosiacChunks();
+        }
+    }
 
     public static void main(String[] args) {
         launch(args);

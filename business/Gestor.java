@@ -16,7 +16,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.TextField;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -45,12 +44,12 @@ public class Gestor {
         return this.rotAccess;
     } // getAcces
 
-    public void reinit(TextField tfSize, TextField tfWidth, TextField tfHeight, Canvas image, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic) {
+    public void reinit( Canvas image, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic) {
         try {
             if (new File("save.dat").exists()) {
                 List<Chunk[][]> list = new SaveFile().recover();
                 if (list.get(0) != null) {
-                    tfSize.setEditable(false);
+                    
                     this.chunkImage = list.get(0);
                     this.size = this.chunkImage[0][0].getSize();
                     this.rowsImage = this.chunkImage.length;
@@ -64,8 +63,7 @@ public class Gestor {
                     } // for x
                 } // if (list.get(0) != null)
                 if (list.get(1) != null) {
-                    tfHeight.setEditable(false);
-                    tfWidth.setEditable(false);
+                    
                     this.chunkMosaic = list.get(1);
                     this.rowsMosaic = this.chunkMosaic.length;
                     this.colsMosaic = this.chunkMosaic[0].length;
@@ -180,12 +178,14 @@ public class Gestor {
         //graphicContextMosaic.clearRect(0, 0, colsMosaic * size, rowsMosaic * size);
     } // exportMosaic
 
-    public void newProyect(TextField tfSize, TextField tfWidth, TextField tfHeight, Canvas canvasImage, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic) {
+    public void newProyect(Canvas canvasImage, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic) {
         this.chunkMosaic = null;
         this.chunkImage = null;
-        tfSize.setEditable(true);
-        tfHeight.setEditable(true);
-        tfWidth.setEditable(true);
+        this.size=0;
+        this.rowsImage=0;
+        this.colsImage=0;
+        this.colsMosaic=0;
+        this.rowsMosaic=0;
         gcI.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
         gcM.clearRect(0, 0, canvasMosaic.getWidth(), canvasMosaic.getHeight());
         new SaveFile().newProyect();
@@ -251,5 +251,15 @@ public class Gestor {
     public void setSize(int size) {
         this.size = size;
     } // setSize
+    public int getSize(){
+        return this.size;
+    }
+    public boolean isDefinedValue(){
+        if(rowsMosaic!=0 && colsMosaic!=0){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
 } // fin de la clase
