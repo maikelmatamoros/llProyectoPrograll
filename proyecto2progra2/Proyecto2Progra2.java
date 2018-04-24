@@ -215,7 +215,10 @@ public class Proyecto2Progra2 extends Application {
                     }
                 } // if
             } else if (event.getSource() == canvasImage) {
-                gestor.selectAChunckImage((int) event.getX(), (int) event.getY());
+                if(gestor.getImage()){
+                    gestor.selectAChunckImage((int) event.getX(), (int) event.getY());
+                }
+                
             } else if (event.getSource() == canvasMosaic && event.getButton() == MouseButton.PRIMARY) {
                 gestor.paintInMosaic((int) event.getX(), (int) event.getY(), graphicContextMosaic);
             } else if (event.getSource() == canvasMosaic && event.getButton() == MouseButton.SECONDARY) {
@@ -232,7 +235,7 @@ public class Proyecto2Progra2 extends Application {
         // Create the custom dialog.
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Size Dialog");
-        dialog.setHeaderText("Please select a size beetwen 50 and 1680");
+        dialog.setHeaderText("Please select a size beetwen 50 and "+gestor.getSmaller());
 
          // Set the button types.
         ButtonType confirmButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
@@ -257,7 +260,7 @@ public class Proyecto2Progra2 extends Application {
         // Do some validation (using the Java 8 lambda syntax).
         size.textProperty().addListener((observable, oldValue, newValue) -> {
             loginButton.setDisable(!(newValue.matches("\\d{1,4}") && 
-             Integer.parseInt(newValue) > 50 && Integer.parseInt(newValue) <= gestor.getSmaller()));
+             Integer.parseInt(newValue) >= 50 && Integer.parseInt(newValue) <= gestor.getSmaller()));
         });
 
         dialog.getDialogPane().setContent(grid);
@@ -273,7 +276,7 @@ public class Proyecto2Progra2 extends Application {
     public void dialogWidthHeigth() {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Mosaic dimention Dialog");
-        dialog.setHeaderText("please write a width and a height between"+ gestor.getSize()+" and 1680");
+        dialog.setHeaderText("please write a width and a height between "+ gestor.getSize()+" and 1680");
 
         ButtonType confirmButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);

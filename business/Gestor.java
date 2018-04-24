@@ -186,15 +186,14 @@ public class Gestor {
         this.colsImage=0;
         this.colsMosaic=0;
         this.rowsMosaic=0;
+        this.image=null;
         gcI.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
         gcM.clearRect(0, 0, canvasMosaic.getWidth(), canvasMosaic.getHeight());
         new SaveFile().newProyect();
     } // newProyect
 
     public void selectAChunckImage(int xP, int yP) {
-        if (chunkImage[0][0] == null) {
-            System.out.println("Ingrese una imagen primero");
-        } else {
+        
             for (int x = 0; x < rowsImage; x++) {
                 for (int y = 0; y < colsImage; y++) {
                     if (chunkImage[x][y].chunkClicked(xP, yP)) {
@@ -204,7 +203,7 @@ public class Gestor {
                     }
                 } // for y
             } // for x
-        } // else
+
     } // selectAChunckImage
 
     public void selectAMosaic(int xP, int yP) {
@@ -267,8 +266,7 @@ public class Gestor {
             return this.image.getWidth();
         }else{
             return this.image.getHeight();
-        }
-        
+        } 
     }
     
     
