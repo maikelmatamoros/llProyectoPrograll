@@ -261,5 +261,23 @@ public class Gestor {
             return false;
         }
     }
+    public int getSmaller(){
+        
+        if(this.image.getHeight()>this.image.getWidth()){
+            return this.image.getWidth();
+        }else{
+            return this.image.getHeight();
+        }
+        
+    }
+    
+    
+    public boolean getImage(){
+        if(this.image!=null){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
 } // fin de la clase

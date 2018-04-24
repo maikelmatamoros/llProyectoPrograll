@@ -113,7 +113,6 @@ public class Proyecto2Progra2 extends Application {
                         if (!gestor.isDefinedValue()) {
                             dialogWidthHeigth();
                         }
-
                     } else if (btnNewProyect.isClicked((int) e.getX(), (int) e.getY())) {
                         gestor.newProyect(canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic);
                     } else if (btnRotate.isClicked((int) e.getX(), (int) e.getY())) {
@@ -134,9 +133,9 @@ public class Proyecto2Progra2 extends Application {
                             }
                         }
                     } else if (btnSplit.isClicked((int) e.getX(), (int) e.getY())) {
-                        if (gestor.getSize() == 0) {
+                        if (gestor.getSize() == 0 && gestor.getImage()) {
                             dialogSize();
-                        } else {
+                        } else if(gestor.getImage() && gestor.getSize() != 0) {
                             gestor.imageChuncks(graphicContextImage, canvasImage);
                         }
 
@@ -257,7 +256,8 @@ public class Proyecto2Progra2 extends Application {
 
         // Do some validation (using the Java 8 lambda syntax).
         size.textProperty().addListener((observable, oldValue, newValue) -> {
-            loginButton.setDisable(!(newValue.matches("\\d{1,4}") && Integer.parseInt(newValue) > 50 && Integer.parseInt(newValue) <= 1680));
+            loginButton.setDisable(!(newValue.matches("\\d{1,4}") && 
+             Integer.parseInt(newValue) > 50 && Integer.parseInt(newValue) <= gestor.getSmaller()));
         });
 
         dialog.getDialogPane().setContent(grid);
@@ -273,7 +273,7 @@ public class Proyecto2Progra2 extends Application {
     public void dialogWidthHeigth() {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Mosaic dimention Dialog");
-        dialog.setHeaderText("please write a width and a height between 50 and 1680");
+        dialog.setHeaderText("please write a width and a height between"+ gestor.getSize()+" and 1680");
 
         ButtonType confirmButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);
@@ -297,7 +297,7 @@ public class Proyecto2Progra2 extends Application {
         loginButton.setDisable(true);
 
         width.textProperty().addListener((observable, oldValue, newValue) -> {
-            if ((newValue.matches("\\d{1,4}") && Integer.parseInt(newValue) > 50 && Integer.parseInt(newValue) <= 1680)) {
+            if ((newValue.matches("\\d{1,4}") && Integer.parseInt(newValue) > gestor.getSize() && Integer.parseInt(newValue) <= 1680)) {
                 aux1 = true;
             } else {
                 aux1 = false;
@@ -309,7 +309,7 @@ public class Proyecto2Progra2 extends Application {
             }
         });
         heigth.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.matches("\\d{1,4}") && Integer.parseInt(newValue) > 50 && Integer.parseInt(newValue) <= 1680) {
+            if (newValue.matches("\\d{1,4}") && Integer.parseInt(newValue) > gestor.getSize() && Integer.parseInt(newValue) <= 1680) {
                 aux2 = true;
             } else {
                 aux2 = false;
