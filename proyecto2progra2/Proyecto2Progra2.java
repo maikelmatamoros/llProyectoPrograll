@@ -326,7 +326,7 @@ public class Proyecto2Progra2 extends Application {
         dialog.getDialogPane().setContent(grid);
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.isPresent() && result.get() == confirmButtonType) {
-            gestor.setMosaicsParameters(Integer.parseInt(width.getText()), Integer.parseInt(heigth.getText()));
+            gestor.setMosaicsParameters(Integer.parseInt(heigth.getText()),Integer.parseInt(width.getText()));
             gestor.drawGrid(graphicContextMosaic, canvasMosaic);
             gestor.initMosiacChunks();
         }
