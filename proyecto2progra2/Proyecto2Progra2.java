@@ -22,8 +22,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -34,7 +32,7 @@ import javafx.stage.WindowEvent;
 
 public class Proyecto2Progra2 extends Application {
 
-    private final int WIDTH = 1380;
+    private final int WIDTH = 1360;
     private final int HEIGHT = 720;
     private ScrollPane scrollPaneImage, scrollPaneMosaic;
     private Pane pane;
@@ -52,6 +50,7 @@ public class Proyecto2Progra2 extends Application {
         primaryStage.setTitle("MosaicMaker");
         this.gestor = new Gestor();
         initComponents(primaryStage);
+        primaryStage.resizableProperty().set(false);
         primaryStage.show();
     } // start
 
@@ -59,35 +58,39 @@ public class Proyecto2Progra2 extends Application {
         this.fileChooser = new FileChooser();
         this.pane = new Pane();
         this.scene = new Scene(this.pane, WIDTH, HEIGHT);
-
+          
         this.scrollPaneImage = new ScrollPane();
         this.scrollPaneMosaic = new ScrollPane();
 
-        this.btnSelectImage = new Button("/assets/selectAnImage.png", 20, 10, 180, 120);
-        this.btDrawMosaic = new Button("/assets/drawMosaic.png", 690, 10, 180, 120);
-        this.btnSplit = new Button("/assets/split.png", 200, 10, 180, 120);
-        this.btnRotate = new Button("/assets/rotate.png", 1050, 35, 70, 70);
-        this.btnSave = new Button("/assets/save.png", 1150, 35, 70, 70);
-        this.btnNewProyect = new Button("/assets/delete.png", 1250, 35, 70, 70);
+        this.btnSelectImage = new Button("/assets/selectAnImage.png", 20, 35, 170, 50);
+        this.btDrawMosaic = new Button("/assets/drawMosaic.png", 690, 35, 170, 50);
+        this.btnSplit = new Button("/assets/split.png", 200, 35, 170, 50);
+        this.btnRotate = new Button("/assets/rotate.png", 1050, 25, 70, 70);
+        this.btnSave = new Button("/assets/save.png", 1150, 25, 70, 70);
+        this.btnNewProyect = new Button("/assets/delete.png", 1250, 25, 70, 70);
 
         this.canvasImage = new Canvas();
         this.canvasMosaic = new Canvas();
-        this.canvasUtilities = new Canvas(1380, 320);
-        this.canvasUtilities.relocate(0, 400);
+        this.canvasUtilities = new Canvas(1380, 160);
+        this.canvasUtilities.relocate(0, 600);
         this.graphicsContextUtilities = this.canvasUtilities.getGraphicsContext2D();
         try {
             drawButtons(this.graphicsContextUtilities);
         } catch (IOException ex) {
             Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+//        this.canvasImage.focusTraversableProperty().set(true);
+//        this.scrollPaneImage.focusTraversableProperty().set(true);
+//        this.scrollPaneImage.setFocusTraversable(true);
 
         this.scrollPaneImage.setContent(this.canvasImage);
         this.scrollPaneMosaic.setContent(this.canvasMosaic);
 
-        this.scrollPaneImage.setPrefSize(670, 400);
-        this.scrollPaneMosaic.setPrefSize(685, 400);
+        this.scrollPaneImage.setPrefSize(670, 600);
+        this.scrollPaneMosaic.setPrefSize(685, 600);
 
-        this.scrollPaneMosaic.relocate(680, 0);
+        this.scrollPaneMosaic.relocate(674, 0);
 
         this.scrollPaneImage.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         this.scrollPaneImage.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
@@ -144,15 +147,6 @@ public class Proyecto2Progra2 extends Application {
             } // handle
         });
 
-        this.scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.C) {
-//                    gestor.available(false);
-                }
-            }
-        });
-
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
@@ -188,7 +182,7 @@ public class Proyecto2Progra2 extends Application {
     } // initComponents
 
     private void drawButtons(GraphicsContext g) throws IOException {
-        g.drawImage(new Image("/assets/background.png"), 0, 0, 1380, 320);
+        g.drawImage(new Image("/assets/background.png"), 0, 0, 1380, 120);
         this.btnSelectImage.draw(g);
         this.btDrawMosaic.draw(g);
         this.btnSplit.draw(g);
