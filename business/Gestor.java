@@ -35,21 +35,17 @@ public class Gestor {
     public void available() {
         this.rotAccess = !rotAccess;
     } // available
-    
-    public boolean isRotateAvaible(){
-        return this.rotAccess;
-    } // isRotableAvaible
 
-    public boolean getAcces() {
+    public boolean getRotAccess() {
         return this.rotAccess;
-    } // getAcces
+    } // getRotAccess
 
-    public void reinit( Canvas image, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic) {
+    public void reinit(Canvas image, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic) {
         try {
             if (new File("save.dat").exists()) {
                 List<Chunk[][]> list = new SaveFile().recover();
                 if (list.get(0) != null) {
-                    
+
                     this.chunkImage = list.get(0);
                     this.size = this.chunkImage[0][0].getSize();
                     this.rowsImage = this.chunkImage.length;
@@ -63,7 +59,7 @@ public class Gestor {
                     } // for x
                 } // if (list.get(0) != null)
                 if (list.get(1) != null) {
-                    
+
                     this.chunkMosaic = list.get(1);
                     this.rowsMosaic = this.chunkMosaic.length;
                     this.colsMosaic = this.chunkMosaic[0].length;
@@ -181,28 +177,27 @@ public class Gestor {
     public void newProyect(Canvas canvasImage, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic) {
         this.chunkMosaic = null;
         this.chunkImage = null;
-        this.size=0;
-        this.rowsImage=0;
-        this.colsImage=0;
-        this.colsMosaic=0;
-        this.rowsMosaic=0;
-        this.image=null;
+        this.size = 0;
+        this.rowsImage = 0;
+        this.colsImage = 0;
+        this.colsMosaic = 0;
+        this.rowsMosaic = 0;
+        this.image = null;
         gcI.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
         gcM.clearRect(0, 0, canvasMosaic.getWidth(), canvasMosaic.getHeight());
         new SaveFile().newProyect();
     } // newProyect
 
     public void selectAChunckImage(int xP, int yP) {
-        
-            for (int x = 0; x < rowsImage; x++) {
-                for (int y = 0; y < colsImage; y++) {
-                    if (chunkImage[x][y].chunkClicked(xP, yP)) {
-                        i = x;
-                        j = y;
-                        break;
-                    }
-                } // for y
-            } // for x
+        for (int x = 0; x < rowsImage; x++) {
+            for (int y = 0; y < colsImage; y++) {
+                if (chunkImage[x][y].chunkClicked(xP, yP)) {
+                    i = x;
+                    j = y;
+                    break;
+                }
+            } // for y
+        } // for x
 
     } // selectAChunckImage
 
@@ -221,7 +216,7 @@ public class Gestor {
 
     public void paintInMosaic(int xP, int yP, GraphicsContext gcM) {
         selectAMosaic(xP, yP);
-        ((ChunkMosaic)chunkMosaic[k][l]).setRotation();
+        ((ChunkMosaic) chunkMosaic[k][l]).setRotation();
         chunkMosaic[k][l].setImageBytes(chunkImage[i][j].getImageBytes());
         try {
             chunkMosaic[k][l].draw(gcM);
@@ -250,32 +245,33 @@ public class Gestor {
     public void setSize(int size) {
         this.size = size;
     } // setSize
-    public int getSize(){
+
+    public int getSize() {
         return this.size;
-    }
-    public boolean isDefinedValue(){
-        if(rowsMosaic!=0 && colsMosaic!=0){
+    } // getSize
+
+    public boolean isDefinedValue() {
+        if (rowsMosaic != 0 && colsMosaic != 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
-    }
-    public int getSmaller(){
-        
-        if(this.image.getHeight()>this.image.getWidth()){
+    } // isDefinedValue
+
+    public int getSmaller() {
+        if (this.image.getHeight() > this.image.getWidth()) {
             return this.image.getWidth();
-        }else{
+        } else {
             return this.image.getHeight();
-        } 
-    }
-    
-    
-    public boolean getImage(){
-        if(this.image!=null){
+        }
+    } // getSmaller
+
+    public boolean getImage() {
+        if (this.image != null) {
             return true;
-        }else{
+        } else {
             return false;
         }
-    }
+    } // getImage
 
 } // fin de la clase

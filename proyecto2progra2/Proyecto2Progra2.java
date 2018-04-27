@@ -58,7 +58,7 @@ public class Proyecto2Progra2 extends Application {
         this.fileChooser = new FileChooser();
         this.pane = new Pane();
         this.scene = new Scene(this.pane, WIDTH, HEIGHT);
-          
+
         this.scrollPaneImage = new ScrollPane();
         this.scrollPaneMosaic = new ScrollPane();
 
@@ -79,11 +79,10 @@ public class Proyecto2Progra2 extends Application {
         } catch (IOException ex) {
             Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
 //        this.canvasImage.focusTraversableProperty().set(true);
 //        this.scrollPaneImage.focusTraversableProperty().set(true);
 //        this.scrollPaneImage.setFocusTraversable(true);
-
         this.scrollPaneImage.setContent(this.canvasImage);
         this.scrollPaneMosaic.setContent(this.canvasMosaic);
 
@@ -120,7 +119,7 @@ public class Proyecto2Progra2 extends Application {
                         gestor.newProyect(canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic);
                     } else if (btnRotate.isClicked((int) e.getX(), (int) e.getY())) {
                         gestor.available();
-                        if (gestor.isRotateAvaible()) {
+                        if (gestor.getRotAccess()) {
                             btnRotate.setPath("/assets/rotateTrue.png");
                             try {
                                 btnRotate.draw(graphicsContextUtilities);
@@ -138,7 +137,7 @@ public class Proyecto2Progra2 extends Application {
                     } else if (btnSplit.isClicked((int) e.getX(), (int) e.getY())) {
                         if (gestor.getSize() == 0 && gestor.getImage()) {
                             dialogSize();
-                        } else if(gestor.getImage() && gestor.getSize() != 0) {
+                        } else if (gestor.getImage() && gestor.getSize() != 0) {
                             gestor.imageChuncks(graphicContextImage, canvasImage);
                         }
 
@@ -194,7 +193,7 @@ public class Proyecto2Progra2 extends Application {
     EventHandler<MouseEvent> canvasClickEvent = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
-            if (gestor.getAcces() && event.getSource() == canvasMosaic) {
+            if (gestor.getRotAccess() && event.getSource() == canvasMosaic) {
                 gestor.selectAMosaic((int) event.getX(), (int) event.getY());
                 if (gestor.getMosaicChunk().getImageBytes().length != 0) {
                     if (event.getButton() == MouseButton.PRIMARY) {
@@ -209,10 +208,10 @@ public class Proyecto2Progra2 extends Application {
                     }
                 } // if
             } else if (event.getSource() == canvasImage) {
-                if(gestor.getImage()){
+                if (gestor.getImage()) {
                     gestor.selectAChunckImage((int) event.getX(), (int) event.getY());
                 }
-                
+
             } else if (event.getSource() == canvasMosaic && event.getButton() == MouseButton.PRIMARY) {
                 gestor.paintInMosaic((int) event.getX(), (int) event.getY(), graphicContextMosaic);
             } else if (event.getSource() == canvasMosaic && event.getButton() == MouseButton.SECONDARY) {
@@ -229,9 +228,9 @@ public class Proyecto2Progra2 extends Application {
         // Create the custom dialog.
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Size Dialog");
-        dialog.setHeaderText("Please select a size beetwen 50 and "+gestor.getSmaller());
+        dialog.setHeaderText("Please select a size beetwen 50 and " + gestor.getSmaller());
 
-         // Set the button types.
+        // Set the button types.
         ButtonType confirmButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);
 
@@ -253,24 +252,23 @@ public class Proyecto2Progra2 extends Application {
 
         // Do some validation (using the Java 8 lambda syntax).
         size.textProperty().addListener((observable, oldValue, newValue) -> {
-            loginButton.setDisable(!(newValue.matches("\\d{1,4}") && 
-             Integer.parseInt(newValue) >= 50 && Integer.parseInt(newValue) <= gestor.getSmaller()));
+            loginButton.setDisable(!(newValue.matches("\\d{1,4}")
+                    && Integer.parseInt(newValue) >= 50 && Integer.parseInt(newValue) <= gestor.getSmaller()));
         });
 
         dialog.getDialogPane().setContent(grid);
-
         Optional<ButtonType> result = dialog.showAndWait();
 
         if (result.isPresent() && result.get() == confirmButtonType) {
             gestor.setSize(Integer.parseInt(size.getText()));
             gestor.imageChuncks(graphicContextImage, canvasImage);
         }
-    }
+    } // dialogSize
 
     public void dialogWidthHeigth() {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Mosaic dimention Dialog");
-        dialog.setHeaderText("please write a width and a height between "+ gestor.getSize()+" and 1680");
+        dialog.setHeaderText("please write a width and a height between " + gestor.getSize() + " and 1680");
 
         ButtonType confirmButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);
@@ -320,11 +318,11 @@ public class Proyecto2Progra2 extends Application {
         dialog.getDialogPane().setContent(grid);
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.isPresent() && result.get() == confirmButtonType) {
-            gestor.setMosaicsParameters(Integer.parseInt(heigth.getText()),Integer.parseInt(width.getText()));
+            gestor.setMosaicsParameters(Integer.parseInt(heigth.getText()), Integer.parseInt(width.getText()));
             gestor.drawGrid(graphicContextMosaic, canvasMosaic);
             gestor.initMosiacChunks();
         }
-    }
+    } // dialogWidthHeigth
 
     public static void main(String[] args) {
         launch(args);
