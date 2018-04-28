@@ -197,9 +197,11 @@ public class Proyecto2Progra2 extends Application {
                 gestor.selectAMosaic((int) event.getX(), (int) event.getY());
                 if (gestor.getMosaicChunk().getImageBytes().length != 0) {
                     if (event.getButton() == MouseButton.PRIMARY) {
-                        ((ChunkMosaic) gestor.getMosaicChunk()).rotate(1);
+//                        ((ChunkMosaic) gestor.getMosaicChunk()).rotate(1);
+//                        ((ChunkMosaic) gestor.getMosaicChunk()).flipHorizontal(1); // Horizontal
+                        ((ChunkMosaic) gestor.getMosaicChunk()).flipVertical(1);
                     } else if (event.getButton() == MouseButton.SECONDARY) {
-                        ((ChunkMosaic) gestor.getMosaicChunk()).rotate(0);
+//                        ((ChunkMosaic) gestor.getMosaicChunk()).rotate(0);
                     }
                     try {
                         ((ChunkMosaic) gestor.getMosaicChunk()).draw(graphicContextMosaic);

@@ -9,10 +9,15 @@ import javafx.scene.image.ImageView;
 public class ChunkMosaic extends Chunk {
 
     private int rotation;
+    private int horizontal, vertical, negativoHorizontal, negativoVertical;
 
     public ChunkMosaic(byte[] image, int x, int y, int size) {
         super(image, x, y, size);
         this.rotation = 0;
+        this.horizontal = 0;
+        this.vertical = 0;
+        this.negativoHorizontal = 1;
+        this.negativoVertical = 1;
     } // constructor
 
     public void rotate(int click) {
@@ -31,16 +36,48 @@ public class ChunkMosaic extends Chunk {
         }
     } // rotate
 
-    public void setRotation() {
+    public void setRotation() { // Cambiar nombre al metodo
         this.rotation = 0;
+        flipHorizontal(0);
+        flipVertical(0);
     } // setRotation
+
+    public void flipHorizontal(int click) {
+        if (click == 1) { // derecha
+            if (horizontal == size) {
+                horizontal = 0;
+                negativoHorizontal = 1;
+            } else {
+                horizontal = size;
+                negativoHorizontal = -1;
+            }
+        } else { // izquierda
+            horizontal = 0;
+            negativoHorizontal = 1;
+        }
+    } // flip
+
+    public void flipVertical(int click) {
+        if (click == 1) { // abajo
+            if(vertical == size){
+                vertical = 0;
+                negativoVertical = 1;
+            }else{
+                vertical = size;
+                negativoVertical = -1;
+            }
+        } else { // arriba
+            vertical = 0;
+            negativoVertical = 1;
+        }
+    } // flip
 
     @Override
     public void draw(GraphicsContext gc) throws IOException {
         ImageView imageView = new ImageView(SwingFXUtils.toFXImage(bytesToImage(), null));
         imageView.setRotate(imageView.getRotate() + rotation);
         SnapshotParameters snapshot = new SnapshotParameters();
-        gc.drawImage(imageView.snapshot(snapshot, null), x * size, y * size, size, size);
+        gc.drawImage(imageView.snapshot(snapshot, null), x * size + horizontal, y * size + vertical, size * negativoHorizontal, size * negativoVertical);
     } // draw
 
     @Override
