@@ -3,6 +3,7 @@ package proyecto2progra2;
 import business.Gestor;
 import domain.Button;
 import domain.ChunkMosaic;
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -29,6 +30,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javax.imageio.ImageIO;
 
 public class Proyecto2Progra2 extends Application {
 
@@ -69,7 +71,7 @@ public class Proyecto2Progra2 extends Application {
         this.btnSave = new Button("/assets/save.png", 1150, 25, 70, 70);
         this.btnNewProyect = new Button("/assets/delete.png", 1250, 25, 70, 70);
 
-        this.canvasImage = new Canvas();
+        this.canvasImage = new Canvas(1000, 1000);
         this.canvasMosaic = new Canvas();
         this.canvasUtilities = new Canvas(1380, 160);
         this.canvasUtilities.relocate(0, 600);
@@ -135,7 +137,7 @@ public class Proyecto2Progra2 extends Application {
                             }
                         }
                     } else if (btnSplit.isClicked((int) e.getX(), (int) e.getY())) {
-                        if (gestor.getSize() == 0 && gestor.getImage()) {
+                        if (gestor.getSize() == 0 && !gestor.getImage()) {
                             dialogSize();
                         } else if (gestor.getImage() && gestor.getSize() != 0) {
                             gestor.imageChuncks(graphicContextImage, canvasImage);
@@ -149,19 +151,19 @@ public class Proyecto2Progra2 extends Application {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                try {
-                    ButtonType confirm = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
-                    ButtonType cancel = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", confirm, cancel);
-                    alert.setTitle("Confirm");
-                    alert.setContentText("Do you wanna save?");
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.isPresent() && result.get() == confirm) {
-                        gestor.save();
+                ButtonType confirm = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
+                ButtonType cancel = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", confirm, cancel);
+                alert.setContentText("Do you wanna charge a proyect?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isPresent() && result.get() == confirm) {
+                    try {
+                        gestor.save(fileChooser, primaryStage);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
-                } catch (IOException | ClassNotFoundException ex) {
-                    Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
@@ -169,7 +171,20 @@ public class Proyecto2Progra2 extends Application {
         primaryStage.setOnShown(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                gestor.reinit(canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic);
+                ButtonType confirm = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
+                ButtonType cancel = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", confirm, cancel);
+                alert.setContentText("Do you wanna charge a proyect?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isPresent() && result.get() == confirm) {
+                    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Dat", "*.dat"));
+                    File file=fileChooser.showSaveDialog(primaryStage);
+                    if(file!=null){
+                        gestor.reinit(canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic, file);
+                    }
+                    
+                }
+
             }
         });
 
@@ -198,8 +213,8 @@ public class Proyecto2Progra2 extends Application {
                 if (gestor.getMosaicChunk().getImageBytes().length != 0) {
                     if (event.getButton() == MouseButton.PRIMARY) {
 //                        ((ChunkMosaic) gestor.getMosaicChunk()).rotate(1);
-//                        ((ChunkMosaic) gestor.getMosaicChunk()).flipHorizontal(1); // Horizontal
-                        ((ChunkMosaic) gestor.getMosaicChunk()).flipVertical(1);
+                        ((ChunkMosaic) gestor.getMosaicChunk()).flipHorizontal(1); // Horizontal
+                        //                  ((ChunkMosaic) gestor.getMosaicChunk()).flipVertical(1);
                     } else if (event.getButton() == MouseButton.SECONDARY) {
 //                        ((ChunkMosaic) gestor.getMosaicChunk()).rotate(0);
                     }

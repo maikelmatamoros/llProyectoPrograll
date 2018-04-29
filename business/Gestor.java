@@ -40,10 +40,10 @@ public class Gestor {
         return this.rotAccess;
     } // getRotAccess
 
-    public void reinit(Canvas image, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic) {
+    public void reinit(Canvas image, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic, File file) {
         try {
-            if (new File("save.dat").exists()) {
-                List<Chunk[][]> list = new SaveFile().recover();
+            if (file.exists()) {
+                List<Chunk[][]> list = new SaveFile().recover(file);
                 if (list.get(0) != null) {
 
                     this.chunkImage = list.get(0);
@@ -127,6 +127,9 @@ public class Gestor {
     } // imageChuncks
 
     public void selectImage(Stage primaryStage, GraphicsContext gc, FileChooser fileChooser, Canvas canvasImage) {
+
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Extends", "*.png","*.jpg","*.jpeg"
+        ,"*.gif","*.bmp","*.wbmp"));
         File selectedDirectory = fileChooser.showOpenDialog(primaryStage);
         if (selectedDirectory != null) {
             try {
@@ -140,6 +143,7 @@ public class Gestor {
                 Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
             }
         } // if (selectedDirectory != null)
+
     } // selectImage
 
     public void repaintMosaic(GraphicsContext gcM) {
@@ -185,7 +189,6 @@ public class Gestor {
         this.image = null;
         gcI.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
         gcM.clearRect(0, 0, canvasMosaic.getWidth(), canvasMosaic.getHeight());
-        new SaveFile().newProyect();
     } // newProyect
 
     public void selectAChunckImage(int xP, int yP) {
@@ -225,13 +228,14 @@ public class Gestor {
         }
     } // paintInMosaic
 
-    public void save() throws IOException, ClassNotFoundException {
-        new SaveFile().save(chunkImage, chunkMosaic);
-    } // save
+    public void save(FileChooser fileChooser, Stage stage) throws IOException, ClassNotFoundException {
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Dat", "*.dat"));
+        File file = fileChooser.showSaveDialog(stage);
+        if (file != null) {
+            new SaveFile().save(chunkImage, chunkMosaic, file.getAbsolutePath());
+        }
 
-    public List<Chunk[][]> recover() throws IOException, ClassNotFoundException {
-        return new SaveFile().recover();
-    } // recover
+    } // save
 
     public Chunk getMosaicChunk() {
         return this.chunkMosaic[k][l];
@@ -267,7 +271,7 @@ public class Gestor {
     } // getSmaller
 
     public boolean getImage() {
-        if (this.image != null) {
+        if (this.chunkImage != null) {
             return true;
         } else {
             return false;

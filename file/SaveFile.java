@@ -12,14 +12,19 @@ import java.util.List;
 
 public class SaveFile {
 
-    private String path;
+
 
     public SaveFile() {
-        this.path = "save.dat";
+        
     } // constructor
 
-    public void save(Chunk[][] matrizChunks, Chunk[][] matrizMosaicChunkses) throws IOException, ClassNotFoundException {
-        File file = new File(this.path);
+    public void save(Chunk[][] matrizChunks, Chunk[][] matrizMosaicChunkses,String path) throws IOException, ClassNotFoundException {
+        File file;
+        if(new File(path).exists()){
+            file = new File(path);
+        }else{
+            file=new File(path+".dat");
+        }
         List<Chunk[][]> previous = new ArrayList<>();
         previous.add(matrizChunks);
         previous.add(matrizMosaicChunkses);
@@ -28,13 +33,12 @@ public class SaveFile {
         objectOutputStream.close();
     } // save
 
-    public List<Chunk[][]> recover() throws IOException, ClassNotFoundException {
-        File myFile = new File(this.path);
+    public List<Chunk[][]> recover(File file) throws IOException, ClassNotFoundException {
         List<Chunk[][]> previous = new ArrayList<>();
-        if (myFile.exists()) {
+        if (file.exists()) {
             ObjectInputStream objectInputStream
                     = new ObjectInputStream(
-                            new FileInputStream(myFile)
+                            new FileInputStream(file)
                     );
             Object aux = objectInputStream.readObject();
             previous = (List<Chunk[][]>) aux;
@@ -43,11 +47,5 @@ public class SaveFile {
         return previous;
     } // recover
 
-    public void newProyect() {
-        File file = new File(path);
-        if (file.exists()) {
-            file.delete();
-        }
-    } // newProyect
 
 } // fin de la clase
