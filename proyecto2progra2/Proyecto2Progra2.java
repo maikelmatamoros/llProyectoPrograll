@@ -42,7 +42,7 @@ public class Proyecto2Progra2 extends Application {
     private Canvas canvasImage, canvasMosaic, canvasUtilities;
     private GraphicsContext graphicContextImage, graphicContextMosaic, graphicsContextUtilities;
     private domain.Button btnSelectImage, btDrawMosaic, btnSave, btnNewProyect, btnRotate, btnSplit;
-    private FileChooser fileChooser;
+    private FileChooser fileChooser1,fileChooser2;
     private Gestor gestor;
     private boolean aux1 = false;
     private boolean aux2 = false;
@@ -57,7 +57,8 @@ public class Proyecto2Progra2 extends Application {
     } // start
 
     private void initComponents(Stage primaryStage) {
-        this.fileChooser = new FileChooser();
+        this.fileChooser1 = new FileChooser();
+        this.fileChooser2 = new FileChooser();
         this.pane = new Pane();
         this.scene = new Scene(this.pane, WIDTH, HEIGHT);
 
@@ -110,9 +111,9 @@ public class Proyecto2Progra2 extends Application {
             public void handle(MouseEvent e) {
                 if (e.getSource() == canvasUtilities) {
                     if (btnSelectImage.isClicked((int) e.getX(), (int) e.getY())) {
-                        gestor.selectImage(primaryStage, graphicContextImage, fileChooser, canvasImage);
+                        gestor.selectImage(primaryStage, graphicContextImage, fileChooser2, canvasImage);
                     } else if (btnSave.isClicked((int) e.getX(), (int) e.getY())) {
-                        gestor.exportMosaic(primaryStage, graphicContextMosaic, canvasMosaic, fileChooser);
+                        gestor.exportMosaic(primaryStage, graphicContextMosaic, canvasMosaic, fileChooser1);
                     } else if (btDrawMosaic.isClicked((int) e.getX(), (int) e.getY())) {
                         if (!gestor.isDefinedValue()) {
                             dialogWidthHeigth();
@@ -158,7 +159,7 @@ public class Proyecto2Progra2 extends Application {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.isPresent() && result.get() == confirm) {
                     try {
-                        gestor.save(fileChooser, primaryStage);
+                        gestor.save(fileChooser1, primaryStage);
                     } catch (IOException ex) {
                         Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ClassNotFoundException ex) {
@@ -177,12 +178,12 @@ public class Proyecto2Progra2 extends Application {
                 alert.setContentText("Do you wanna charge a proyect?");
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.isPresent() && result.get() == confirm) {
-                    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Dat", "*.dat"));
-                    File file=fileChooser.showSaveDialog(primaryStage);
-                    if(file!=null){
+                    fileChooser1.getExtensionFilters().add(new FileChooser.ExtensionFilter("Dat", "*.dat"));
+                    File file = fileChooser1.showOpenDialog(primaryStage);
+                    if (file != null) {
                         gestor.reinit(canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic, file);
                     }
-                    
+
                 }
 
             }

@@ -208,7 +208,6 @@ public class Gestor {
         for (int x = 0; x < rowsMosaic; x++) {
             for (int y = 0; y < colsMosaic; y++) {
                 if (chunkMosaic[x][y].chunkClicked(xP, yP)) {
-                    System.out.println(y + " " + x);
                     k = x;
                     l = y;
                     break;
