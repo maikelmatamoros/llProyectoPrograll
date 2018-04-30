@@ -30,11 +30,19 @@ public class Gestor {
     private int size, rowsMosaic, colsMosaic = 0;
     private int rowsImage, colsImage, k, l, i, j;
     private BufferedImage image;
-    private boolean rotAccess = false;
+    private boolean rotAccess, deleteAccess = false;
 
     public void available() {
         this.rotAccess = !rotAccess;
     } // available
+
+    public void deleteAccess() {
+        this.deleteAccess = !deleteAccess;
+    }
+
+    public boolean getDeleteAccess() {
+        return this.deleteAccess;
+    }
 
     public boolean getRotAccess() {
         return this.rotAccess;
@@ -128,8 +136,8 @@ public class Gestor {
 
     public void selectImage(Stage primaryStage, GraphicsContext gc, FileChooser fileChooser, Canvas canvasImage) {
 
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Extends", "*.png","*.jpg","*.jpeg"
-        ,"*.gif","*.bmp","*.wbmp"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Extends", "*.png", "*.jpg", "*.jpeg",
+                "*.gif", "*.bmp", "*.wbmp"));
         File selectedDirectory = fileChooser.showOpenDialog(primaryStage);
         if (selectedDirectory != null) {
             try {
@@ -161,21 +169,27 @@ public class Gestor {
     } // repaintMosaic
 
     public void exportMosaic(Stage primaryStage, GraphicsContext gcM, Canvas canvasMosaic, FileChooser fileChooser) {
-        gcM.clearRect(0, 0, colsMosaic * size, rowsMosaic * size);
-        repaintMosaic(gcM);
-        WritableImage wim = new WritableImage((int) Math.round(canvasMosaic.getWidth()), (int) Math.round(canvasMosaic.getHeight()));
-        SnapshotParameters snapshotParameters = new SnapshotParameters();
-        snapshotParameters.setFill(Color.TRANSPARENT);
-        canvasMosaic.snapshot(snapshotParameters, wim);
-        drawGrid(gcM, canvasMosaic);
-        repaintMosaic(gcM);
-        File file = fileChooser.showSaveDialog(primaryStage);
-        try {
-            ImageIO.write(SwingFXUtils.fromFXImage(wim, null), "png", file);
-        } catch (IOException ex) {
-            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+        if (chunkMosaic != null) {
+            gcM.clearRect(0, 0, colsMosaic * size, rowsMosaic * size);
+            repaintMosaic(gcM);
+            WritableImage wim = new WritableImage((int) Math.round(canvasMosaic.getWidth()), (int) Math.round(canvasMosaic.getHeight()));
+            SnapshotParameters snapshotParameters = new SnapshotParameters();
+            snapshotParameters.setFill(Color.TRANSPARENT);
+            canvasMosaic.snapshot(snapshotParameters, wim);
+            drawGrid(gcM, canvasMosaic);
+            repaintMosaic(gcM);
+            File file = fileChooser.showSaveDialog(primaryStage);
+            if (file != null) {
+                try {
+                    ImageIO.write(SwingFXUtils.fromFXImage(wim, null), "png", file);
+                } catch (IOException ex) {
+                    Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            //graphicContextMosaic.clearRect(0, 0, colsMosaic * size, rowsMosaic * size);
         }
-        //graphicContextMosaic.clearRect(0, 0, colsMosaic * size, rowsMosaic * size);
+
     } // exportMosaic
 
     public void newProyect(Canvas canvasImage, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic) {
@@ -276,5 +290,12 @@ public class Gestor {
             return false;
         }
     } // getImage
+
+    public void delete(GraphicsContext graphicContextMosaic, Canvas canvasMosaic) {
+        graphicContextMosaic.clearRect(0, 0, canvasMosaic.getWidth(), canvasMosaic.getHeight());
+        ((ChunkMosaic) getMosaicChunk()).setImageBytes(new byte[0]);
+        drawGrid(graphicContextMosaic, canvasMosaic);
+        repaintMosaic(graphicContextMosaic);
+    }
 
 } // fin de la clase
