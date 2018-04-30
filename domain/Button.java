@@ -16,7 +16,7 @@ public class Button {
         this.w = w;
         this.h = h;
     } // constructor
-
+    
     public void setPath(String path) {
         this.path = path;
     } // setPath

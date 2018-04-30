@@ -46,7 +46,7 @@ public class Proyecto2Progra2 extends Application {
     private Scene scene;
     private Canvas canvasImage, canvasMosaic, canvasUtilities;
     private GraphicsContext graphicContextImage, graphicContextMosaic, graphicsContextUtilities;
-    private domain.Button btnSelectImage, btDrawMosaic, btnNewProyect, btnRotate, btnSplit;
+    private domain.Button btnSelectImage, btDrawMosaic, btnEraser, btnRotateD, btnRotateI, btnSplit, btnFlipH, btnFlipV, btnDraw;
     private FileChooser fileChooser1, fileChooser2;
     private Gestor gestor;
     private boolean aux1 = false;
@@ -63,11 +63,11 @@ public class Proyecto2Progra2 extends Application {
         primaryStage.show();
     } // start
 
-    private void init(Stage priStage) {
-        this.menuBar = new MenuBar();
-        fileChooser1 = new FileChooser();
-
+    private void init(Stage primaryStage) {
+        this.fileChooser1 = new FileChooser();
         this.fileChooser2 = new FileChooser();
+        
+        this.menuBar = new MenuBar();
         Menu menu = new Menu("File");
         MenuItem newProyectItem = new MenuItem("New Proyect");
         MenuItem openProyectItem = new MenuItem("Open Proyect");
@@ -77,13 +77,14 @@ public class Proyecto2Progra2 extends Application {
         menu.getItems().add(openProyectItem);
         menu.getItems().add(saveAsProyectItem);
         menu.getItems().add(exportImage);
+        
         newProyectItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 if (gestor.getImage()) {
-                    if (alert(priStage)) {
+                    if (alert(primaryStage)) {
                         try {
-                            gestor.save(fileChooser1, priStage);
+                            gestor.save(fileChooser1, primaryStage);
                         } catch (IOException ex) {
                             Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
                         } catch (ClassNotFoundException ex) {
@@ -92,62 +93,61 @@ public class Proyecto2Progra2 extends Application {
                     }
                     gestor.newProyect(canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic);
                 } else {
-                    initComponents(priStage);
+                    initComponents(primaryStage);
                 }
-
             }
         });
+        
         openProyectItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 if (gestor.getImage()) {
-                    if (alert(priStage)) {
+                    if (alert(primaryStage)) {
                         try {
-                            gestor.save(fileChooser1, priStage);
-                        } catch (IOException ex) {
-                            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (ClassNotFoundException ex) {
+                            gestor.save(fileChooser1, primaryStage);
+                        } catch (IOException | ClassNotFoundException ex) {
                             Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
 
                 }
                 fileChooser1.getExtensionFilters().add(new FileChooser.ExtensionFilter("Dat", "*.dat"));
-                File file = fileChooser1.showOpenDialog(priStage);
+                File file = fileChooser1.showOpenDialog(primaryStage);
                 if (file != null) {
-                    initComponents(priStage);
+                    initComponents(primaryStage);
                     gestor.reinit(canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic, file);
                 }
 
             }
         });
+        
         saveAsProyectItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 if (gestor.getImage()) {
                     try {
-                        gestor.save(fileChooser1, priStage);
-                    } catch (IOException ex) {
-                        Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ClassNotFoundException ex) {
+                        gestor.save(fileChooser1, primaryStage);
+                    } catch (IOException | ClassNotFoundException ex) {
                         Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
 
             }
         });
+        
         exportImage.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                gestor.exportMosaic(priStage, graphicContextMosaic, canvasMosaic, fileChooser1);
+                gestor.exportMosaic(primaryStage, graphicContextMosaic, canvasMosaic, fileChooser1);
             }
         });
+        
         this.menuBar.getMenus().add(menu);
         this.pane = new BorderPane();
         this.pane.setTop(menuBar);
         this.scene = new Scene(this.pane, WIDTH, HEIGHT);
-        priStage.setScene(this.scene);
-    }
+        primaryStage.setScene(this.scene);
+    } // init
 
     private void initComponents(Stage primaryStage) {
         this.vBox = new HBox();
@@ -156,10 +156,15 @@ public class Proyecto2Progra2 extends Application {
         this.scrollPaneMosaic = new ScrollPane();
 
         this.btnSelectImage = new Button("/assets/selectAnImage.png", 20, 35, 170, 50);
-        this.btDrawMosaic = new Button("/assets/drawMosaic.png", 690, 35, 170, 50);
         this.btnSplit = new Button("/assets/split.png", 200, 35, 170, 50);
-        this.btnRotate = new Button("/assets/rotate.png", 1050, 25, 70, 70);
-        this.btnNewProyect = new Button("/assets/delete.png", 1250, 25, 70, 70);
+        this.btDrawMosaic = new Button("/assets/drawMosaic.png", 380, 35, 170, 50);
+                       
+        this.btnDraw = new Button("/assets/draw.png", 700,25,70,70);
+        this.btnEraser = new Button("/assets/eraser.png", 800, 25, 70, 70);
+        this.btnRotateI = new Button("/assets/rotateI.png", 900, 25, 70, 70);
+        this.btnRotateD = new Button("/assets/rotateD.png", 1000, 25, 70, 70);
+        this.btnFlipH = new Button("/assets/flipH.png", 1100, 25, 70, 70);
+        this.btnFlipV = new Button("/assets/flipV.png", 1200, 25, 70, 70);
 
         this.canvasImage = new Canvas(1000, 1000);
         this.canvasMosaic = new Canvas();
@@ -199,21 +204,21 @@ public class Proyecto2Progra2 extends Application {
                         if (!gestor.isDefinedValue()) {
                             dialogWidthHeigth();
                         }
-                    } else if (btnNewProyect.isClicked((int) e.getX(), (int) e.getY())) {
+                    } else if (btnEraser.isClicked((int) e.getX(), (int) e.getY())) {
                         gestor.deleteAccess();
-                    } else if (btnRotate.isClicked((int) e.getX(), (int) e.getY())) {
-                        gestor.available();
+                    } else if (btnRotateD.isClicked((int) e.getX(), (int) e.getY())) {
+                        gestor.rotateAccess();
                         if (gestor.getRotAccess()) {
-                            btnRotate.setPath("/assets/rotateTrue.png");
+                            btnRotateD.setPath("/assets/rotateDTrue.png");
                             try {
-                                btnRotate.draw(graphicsContextUtilities);
+                                btnRotateD.draw(graphicsContextUtilities);
                             } catch (IOException ex) {
                                 Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         } else {
-                            btnRotate.setPath("/assets/rotate.png");
+                            btnRotateD.setPath("/assets/rotateD.png");
                             try {
-                                btnRotate.draw(graphicsContextUtilities);
+                                btnRotateD.draw(graphicsContextUtilities);
                             } catch (IOException ex) {
                                 Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
                             }
@@ -258,12 +263,17 @@ public class Proyecto2Progra2 extends Application {
     } // initComponents
 
     private void drawButtons(GraphicsContext g) throws IOException {
-        g.drawImage(new Image("/assets/background.png"), 0, 0, 1380, 120);
+        g.drawImage(new Image("/assets/background.png"), 0, 0, 1380, 160);
         this.btnSelectImage.draw(g);
-        this.btDrawMosaic.draw(g);
         this.btnSplit.draw(g);
-        this.btnNewProyect.draw(g);
-        this.btnRotate.draw(g);
+        this.btDrawMosaic.draw(g);
+
+        this.btnDraw.draw(g);
+        this.btnEraser.draw(g);
+        this.btnRotateI.draw(g);
+        this.btnRotateD.draw(g);
+        this.btnFlipH.draw(g);
+        this.btnFlipV.draw(g);
     } // drawButtons
 
     EventHandler<MouseEvent> canvasClickEvent = new EventHandler<MouseEvent>() {
@@ -411,7 +421,7 @@ public class Proyecto2Progra2 extends Application {
         } else {
             return false;
         }
-    }
+    } // alert
 
     public static void main(String[] args) {
         launch(args);

@@ -30,22 +30,22 @@ public class Gestor {
     private int size, rowsMosaic, colsMosaic = 0;
     private int rowsImage, colsImage, k, l, i, j;
     private BufferedImage image;
-    private boolean rotAccess, deleteAccess = false;
+    private boolean rotateAccess, eraserAccess = false;
 
-    public void available() {
-        this.rotAccess = !rotAccess;
+    public void rotateAccess() {
+        this.rotateAccess = !rotateAccess;
     } // available
 
     public void deleteAccess() {
-        this.deleteAccess = !deleteAccess;
+        this.eraserAccess = !eraserAccess;
     }
 
     public boolean getDeleteAccess() {
-        return this.deleteAccess;
+        return this.eraserAccess;
     }
 
     public boolean getRotAccess() {
-        return this.rotAccess;
+        return this.rotateAccess;
     } // getRotAccess
 
     public void reinit(Canvas image, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic, File file) {
