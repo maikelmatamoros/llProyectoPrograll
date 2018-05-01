@@ -110,8 +110,8 @@ public class Gestor {
         gc.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
         this.rowsImage = (int) (this.image.getHeight() / this.size);
         this.colsImage = (int) (this.image.getWidth() / this.size); // determines the chunk width and height
-        canvasImage.setHeight((this.rowsImage) * this.size + ((this.rowsImage + 1) * 10));
-        canvasImage.setWidth((this.colsImage) * this.size + ((this.colsImage + 1) * 10));
+        canvasImage.setHeight((this.rowsImage) * this.size + ((this.rowsImage + 1) * 5));
+        canvasImage.setWidth((this.colsImage) * this.size + ((this.colsImage + 1) * 5));
         this.chunkImage = new ChunkImage[this.rowsImage][this.colsImage];
         for (int x = 0; x < this.rowsImage; x++) {
             for (int y = 0; y < this.colsImage; y++) {
@@ -131,8 +131,6 @@ public class Gestor {
 
     public void selectImage(Stage primaryStage, GraphicsContext gc, FileChooser fileChooser, Canvas canvasImage) {
 
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Extends", "*.png", "*.jpg", "*.jpeg",
-                "*.gif", "*.bmp", "*.wbmp"));
         File selectedDirectory = fileChooser.showOpenDialog(primaryStage);
         if (selectedDirectory != null) {
             try {
