@@ -178,16 +178,17 @@ public class Proyecto2Progra2 extends Application {
         this.canvasUtilities.relocate(0, 600);
         this.graphicsContextUtilities = this.canvasUtilities.getGraphicsContext2D();
         try {
+            this.btnDraw.setAvailable();
+        } catch (IOException ex) {
+            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
             drawButtons(this.graphicsContextUtilities);
         } catch (IOException ex) {
             Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        try {
-            this.btnDraw.setAvailable(graphicsContextUtilities);
-        } catch (IOException ex) {
-            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
         this.scrollPaneImage.setContent(this.canvasImage);
         this.scrollPaneMosaic.setContent(this.canvasMosaic);
 
@@ -223,24 +224,29 @@ public class Proyecto2Progra2 extends Application {
                                 gestor.imageChuncks(graphicContextImage, canvasImage);
                             }
                         } else if (btnEraser.isClicked((int) e.getX(), (int) e.getY())) {
-                            drawButtons(graphicsContextUtilities);
-                            gestor.setState(graphicsContextUtilities, functionButtonList, btnEraser);
                             
+                            gestor.setState(functionButtonList, btnEraser);
+                            drawButtons(graphicsContextUtilities);
                         } else if (btnRotateD.isClicked((int) e.getX(), (int) e.getY())) {
+                            
+                            gestor.setState(functionButtonList, btnRotateD);
                             drawButtons(graphicsContextUtilities);
-                            gestor.setState(graphicsContextUtilities, functionButtonList, btnRotateD);
                         } else if (btnRotateI.isClicked((int) e.getX(), (int) e.getY())) {
+                            
+                            gestor.setState(functionButtonList, btnRotateI);
                             drawButtons(graphicsContextUtilities);
-                            gestor.setState(graphicsContextUtilities, functionButtonList, btnRotateI);
                         } else if (btnDraw.isClicked((int) e.getX(), (int) e.getY())) {
+
+                            gestor.setState( functionButtonList, btnDraw);
                             drawButtons(graphicsContextUtilities);
-                            gestor.setState(graphicsContextUtilities, functionButtonList, btnDraw);
                         } else if (btnFlipH.isClicked((int) e.getX(), (int) e.getY())) {
+                            
+                            gestor.setState(functionButtonList, btnFlipH);
                             drawButtons(graphicsContextUtilities);
-                            gestor.setState(graphicsContextUtilities, functionButtonList, btnFlipH);
                         } else if (btnFlipV.isClicked((int) e.getX(), (int) e.getY())) {
+                            
+                            gestor.setState(functionButtonList, btnFlipV);
                             drawButtons(graphicsContextUtilities);
-                            gestor.setState(graphicsContextUtilities, functionButtonList, btnFlipV);
                         } // else-if
                     } // if
                     // handle

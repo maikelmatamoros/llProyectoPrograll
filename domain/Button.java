@@ -20,9 +20,9 @@ public class Button {
     } // constructor
     
     
-    public void setAvailable(GraphicsContext gc) throws IOException{
+    public void setAvailable() throws IOException{
         this.state=!this.state;
-        draw(gc);
+
     }
 
     public void draw(GraphicsContext gc) throws IOException {

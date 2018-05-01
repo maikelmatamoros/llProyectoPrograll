@@ -33,14 +33,14 @@ public class Gestor {
     private int rowsImage, colsImage, k, l, i, j;
     private BufferedImage image;
 
-    public void setState(GraphicsContext gc, ArrayList<Button> list, Button button) throws IOException {
+    public void setState( ArrayList<Button> list, Button button) throws IOException {
 
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getState()) {
-                list.get(i).setAvailable(gc);
+                list.get(i).setAvailable();
             }
         }
-        button.setAvailable(gc);
+        button.setAvailable();
     }
 
     public void reinit(Canvas image, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic, File file) {
@@ -139,6 +139,7 @@ public class Gestor {
                 BufferedImage aux = ImageIO.read(selectedDirectory);
                 if (this.size != 0) {
                     if (aux.getHeight() >= this.size && aux.getWidth() >= this.size) {
+                        gc.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
                         this.image = aux;
                         canvasImage.setHeight(this.image.getHeight());
                         canvasImage.setWidth(this.image.getWidth());
