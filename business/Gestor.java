@@ -34,6 +34,7 @@ public class Gestor {
     private BufferedImage image;
 
     public void setState(GraphicsContext gc, ArrayList<Button> list, Button button) throws IOException {
+
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getState()) {
                 list.get(i).setAvailable(gc);

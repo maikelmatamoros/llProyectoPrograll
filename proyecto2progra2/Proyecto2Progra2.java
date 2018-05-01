@@ -182,7 +182,12 @@ public class Proyecto2Progra2 extends Application {
         } catch (IOException ex) {
             Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
+        try {
+            this.btnDraw.setAvailable(graphicsContextUtilities);
+        } catch (IOException ex) {
+            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.scrollPaneImage.setContent(this.canvasImage);
         this.scrollPaneMosaic.setContent(this.canvasMosaic);
 
@@ -218,17 +223,23 @@ public class Proyecto2Progra2 extends Application {
                                 gestor.imageChuncks(graphicContextImage, canvasImage);
                             }
                         } else if (btnEraser.isClicked((int) e.getX(), (int) e.getY())) {
+                            drawButtons(graphicsContextUtilities);
                             gestor.setState(graphicsContextUtilities, functionButtonList, btnEraser);
                             
                         } else if (btnRotateD.isClicked((int) e.getX(), (int) e.getY())) {
+                            drawButtons(graphicsContextUtilities);
                             gestor.setState(graphicsContextUtilities, functionButtonList, btnRotateD);
                         } else if (btnRotateI.isClicked((int) e.getX(), (int) e.getY())) {
+                            drawButtons(graphicsContextUtilities);
                             gestor.setState(graphicsContextUtilities, functionButtonList, btnRotateI);
                         } else if (btnDraw.isClicked((int) e.getX(), (int) e.getY())) {
+                            drawButtons(graphicsContextUtilities);
                             gestor.setState(graphicsContextUtilities, functionButtonList, btnDraw);
                         } else if (btnFlipH.isClicked((int) e.getX(), (int) e.getY())) {
+                            drawButtons(graphicsContextUtilities);
                             gestor.setState(graphicsContextUtilities, functionButtonList, btnFlipH);
                         } else if (btnFlipV.isClicked((int) e.getX(), (int) e.getY())) {
+                            drawButtons(graphicsContextUtilities);
                             gestor.setState(graphicsContextUtilities, functionButtonList, btnFlipV);
                         } // else-if
                     } // if
@@ -277,21 +288,17 @@ public class Proyecto2Progra2 extends Application {
     } // initComponents
 
     private void drawButtons(GraphicsContext g) throws IOException {
+        g.clearRect(0, 0, 1380, 160);
         g.drawImage(new Image("/assets/background.png"), 0, 0, 1380, 160);
         this.btnSelectImage.draw(g);
         this.btnSplit.draw(g);
         this.btDrawMosaic.draw(g);
-
-        try {
-            this.btnDraw.setAvailable(graphicsContextUtilities);
-        } catch (IOException ex) {
-            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
-        }
         this.btnEraser.draw(g);
         this.btnRotateI.draw(g);
         this.btnRotateD.draw(g);
         this.btnFlipH.draw(g);
         this.btnFlipV.draw(g);
+        this.btnDraw.draw(g);
     } // drawButtons
 
     //                  
