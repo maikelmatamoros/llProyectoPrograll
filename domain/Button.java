@@ -6,13 +6,11 @@ import javafx.scene.image.Image;
 
 public class Button {
 
-    private String path;
     private int x, y, w, h;
     private boolean state;
-    String name;
+    private String name;
     
-    public Button(String path, int x, int y, int w, int h,String name) {
-        this.path = path;
+    public Button( int x, int y, int w, int h,String name) {
         this.x = x;
         this.y = y;
         this.w = w;

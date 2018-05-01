@@ -5,6 +5,7 @@ import domain.Button;
 import domain.ChunkMosaic;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,7 +28,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -52,6 +52,7 @@ public class Proyecto2Progra2 extends Application {
     private boolean aux1 = false;
     private boolean aux2 = false;
     private MenuBar menuBar;
+    private ArrayList<Button> functionButtonList;
 
     @Override
     public void start(Stage primaryStage) {
@@ -66,7 +67,7 @@ public class Proyecto2Progra2 extends Application {
     private void init(Stage primaryStage) {
         this.fileChooser1 = new FileChooser();
         this.fileChooser2 = new FileChooser();
-
+        this.functionButtonList=new ArrayList<>();
         this.menuBar = new MenuBar();
         Menu menu = new Menu("File");
         MenuItem newProyectItem = new MenuItem("New Proyect");
@@ -155,16 +156,22 @@ public class Proyecto2Progra2 extends Application {
         this.scrollPaneImage = new ScrollPane();
         this.scrollPaneMosaic = new ScrollPane();
 
-        this.btnSelectImage = new Button("/assets/selectAnImage.png", 20, 35, 170, 50, "selectAnImage");
-        this.btnSplit = new Button("/assets/split.png", 200, 35, 170, 50, "split");
-        this.btDrawMosaic = new Button("/assets/drawMosaic.png", 380, 35, 170, 50, "drawMosaic");
+        this.btnSelectImage = new Button( 20, 35, 170, 50, "selectAnImage");
+        this.btnSplit = new Button( 200, 35, 170, 50, "split");
+        this.btDrawMosaic = new Button( 380, 35, 170, 50, "drawMosaic");
 
-        this.btnDraw = new Button("/assets/draw.png", 700, 25, 70, 70, "draw");
-        this.btnEraser = new Button("/assets/eraser.png", 800, 25, 70, 70, "eraser");
-        this.btnRotateI = new Button("/assets/rotateI.png", 900, 25, 70, 70, "rotateI");
-        this.btnRotateD = new Button("/assets/rotateD.png", 1000, 25, 70, 70, "rotateD");
-        this.btnFlipH = new Button("/assets/flipH.png", 1100, 25, 70, 70, "flipH");
-        this.btnFlipV = new Button("/assets/flipV.png", 1200, 25, 70, 70, "flipV");
+        this.btnDraw = new Button( 700, 25, 70, 70, "draw");
+        this.btnEraser = new Button( 800, 25, 70, 70, "eraser");
+        this.btnRotateI = new Button( 900, 25, 70, 70, "rotateI");
+        this.btnRotateD = new Button( 1000, 25, 70, 70, "rotateD");
+        this.btnFlipH = new Button( 1100, 25, 70, 70, "flipH");
+        this.btnFlipV = new Button( 1200, 25, 70, 70, "flipV");
+        this.functionButtonList.add(btnDraw);
+        this.functionButtonList.add(btnEraser);
+        this.functionButtonList.add(btnFlipH);
+        this.functionButtonList.add(btnFlipV);
+        this.functionButtonList.add(btnRotateD);
+        this.functionButtonList.add(btnRotateI);
         this.canvasImage = new Canvas(1000, 1000);
         this.canvasMosaic = new Canvas();
         this.canvasUtilities = new Canvas(1380, 160);
@@ -211,17 +218,18 @@ public class Proyecto2Progra2 extends Application {
                                 gestor.imageChuncks(graphicContextImage, canvasImage);
                             }
                         } else if (btnEraser.isClicked((int) e.getX(), (int) e.getY())) {
-                            btnEraser.setAvailable(graphicsContextUtilities);
+                            gestor.setState(graphicsContextUtilities, functionButtonList, btnEraser);
+                            
                         } else if (btnRotateD.isClicked((int) e.getX(), (int) e.getY())) {
-                            btnRotateD.setAvailable(graphicsContextUtilities);
+                            gestor.setState(graphicsContextUtilities, functionButtonList, btnRotateD);
                         } else if (btnRotateI.isClicked((int) e.getX(), (int) e.getY())) {
-                            btnRotateI.setAvailable(graphicsContextUtilities);
+                            gestor.setState(graphicsContextUtilities, functionButtonList, btnRotateI);
                         } else if (btnDraw.isClicked((int) e.getX(), (int) e.getY())) {
-                            btnDraw.setAvailable(graphicsContextUtilities);
+                            gestor.setState(graphicsContextUtilities, functionButtonList, btnDraw);
                         } else if (btnFlipH.isClicked((int) e.getX(), (int) e.getY())) {
-                            btnFlipH.setAvailable(graphicsContextUtilities);
+                            gestor.setState(graphicsContextUtilities, functionButtonList, btnFlipH);
                         } else if (btnFlipV.isClicked((int) e.getX(), (int) e.getY())) {
-                            btnFlipV.setAvailable(graphicsContextUtilities);
+                            gestor.setState(graphicsContextUtilities, functionButtonList, btnFlipV);
                         } // else-if
                     } // if
                     // handle
@@ -274,7 +282,11 @@ public class Proyecto2Progra2 extends Application {
         this.btnSplit.draw(g);
         this.btDrawMosaic.draw(g);
 
-        this.btnDraw.draw(g);
+        try {
+            this.btnDraw.setAvailable(graphicsContextUtilities);
+        } catch (IOException ex) {
+            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.btnEraser.draw(g);
         this.btnRotateI.draw(g);
         this.btnRotateD.draw(g);

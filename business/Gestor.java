@@ -1,6 +1,7 @@
 package business;
 
 import Utils.ChunkTypes;
+import domain.Button;
 import domain.Chunk;
 import domain.ChunkImage;
 import domain.ChunkMosaic;
@@ -9,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,23 +32,15 @@ public class Gestor {
     private int size, rowsMosaic, colsMosaic = 0;
     private int rowsImage, colsImage, k, l, i, j;
     private BufferedImage image;
-    private boolean rotateAccess, eraserAccess = false;
 
-    public void rotateAccess() {
-        this.rotateAccess = !rotateAccess;
-    } // available
-
-    public void deleteAccess() {
-        this.eraserAccess = !eraserAccess;
+    public void setState(GraphicsContext gc, ArrayList<Button> list, Button button) throws IOException {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getState()) {
+                list.get(i).setAvailable(gc);
+            }
+        }
+        button.setAvailable(gc);
     }
-
-    public boolean getDeleteAccess() {
-        return this.eraserAccess;
-    }
-
-    public boolean getRotAccess() {
-        return this.rotateAccess;
-    } // getRotAccess
 
     public void reinit(Canvas image, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic, File file) {
         try {
@@ -141,10 +135,22 @@ public class Gestor {
         File selectedDirectory = fileChooser.showOpenDialog(primaryStage);
         if (selectedDirectory != null) {
             try {
-                this.image = ImageIO.read(selectedDirectory);
-                canvasImage.setHeight(this.image.getHeight());
-                canvasImage.setWidth(this.image.getWidth());
-                gc.drawImage(SwingFXUtils.toFXImage(this.image, null), 0, 0);
+                BufferedImage aux = ImageIO.read(selectedDirectory);
+                if (this.size != 0) {
+                    if (aux.getHeight() >= this.size && aux.getWidth() >= this.size) {
+                        this.image = aux;
+                        canvasImage.setHeight(this.image.getHeight());
+                        canvasImage.setWidth(this.image.getWidth());
+                        gc.drawImage(SwingFXUtils.toFXImage(this.image, null), 0, 0);
+
+                    }
+                } else {
+                    this.image = aux;
+                    canvasImage.setHeight(this.image.getHeight());
+                    canvasImage.setWidth(this.image.getWidth());
+                    gc.drawImage(SwingFXUtils.toFXImage(this.image, null), 0, 0);
+
+                }
 
             } // if
             catch (IOException ex) {
@@ -178,9 +184,11 @@ public class Gestor {
             canvasMosaic.snapshot(snapshotParameters, wim);
             drawGrid(gcM, canvasMosaic);
             repaintMosaic(gcM);
-            File file = fileChooser.showSaveDialog(primaryStage);
-            if (file != null) {
+            String path=fileChooser.showSaveDialog(primaryStage).getPath()+".png";
+            File file =new File(path);
+            if (path!= null) {
                 try {
+                    System.err.println("entra");
                     ImageIO.write(SwingFXUtils.fromFXImage(wim, null), "png", file);
                 } catch (IOException ex) {
                     Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
