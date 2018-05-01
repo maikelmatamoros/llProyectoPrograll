@@ -55,6 +55,7 @@ public class ChunkMosaic extends Chunk {
             horizontal = 0;
             negativoHorizontal = 1;
         }
+        
     } // flip
 
     public void flipVertical(int click) {
