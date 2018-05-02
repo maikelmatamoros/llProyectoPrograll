@@ -31,7 +31,31 @@ public class Gestor {
     private Chunk[][] chunkMosaic;
     private int size, rowsMosaic, colsMosaic = 0;
     private int rowsImage, colsImage, k, l, i, j;
+    private int contImageChanges,contMosaicChanges=0;
     private BufferedImage image;
+    
+    public void imageChanges(int action){
+        if(action==0){
+            this.contImageChanges++;
+        }else{
+            this.contImageChanges=0;
+        }
+    }
+    public void mosaicChanges(int action){
+        if(action==0){
+            this.contMosaicChanges++;
+        }else{
+            this.contMosaicChanges=0;
+        }
+    }
+    
+    public boolean getConts(){
+        if(contImageChanges==0 && contMosaicChanges==0){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     public void setState( ArrayList<Button> list, Button button) throws IOException {
 
@@ -250,11 +274,15 @@ public class Gestor {
     } // paintInMosaic
 
     public void save(FileChooser fileChooser, Stage stage) throws IOException, ClassNotFoundException {
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Dat", "*.dat"));
-        File file = fileChooser.showSaveDialog(stage);
+        if(chunkImage!=null){
+            File file = fileChooser.showSaveDialog(stage);
         if (file != null) {
             new SaveFile().save(chunkImage, chunkMosaic, file.getAbsolutePath());
+            imageChanges(1);
+            mosaicChanges(1);
         }
+        }
+        
 
     } // save
     

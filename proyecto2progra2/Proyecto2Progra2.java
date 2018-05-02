@@ -86,14 +86,8 @@ public class Proyecto2Progra2 extends Application {
             @Override
             public void handle(ActionEvent event) {
                 if (gestor.getImage()) {
-                    if (alert(primaryStage)) {
-                        try {
-                            gestor.save(fileChooserData, primaryStage);
-                        } catch (IOException ex) {
-                            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (ClassNotFoundException ex) {
-                            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                    if (!gestor.getConts()) {
+                        alert(primaryStage);
                     }
                     gestor.newProyect(canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic);
                 } else {
@@ -106,14 +100,9 @@ public class Proyecto2Progra2 extends Application {
             @Override
             public void handle(ActionEvent event) {
                 if (gestor.getImage()) {
-                    if (alert(primaryStage)) {
-                        try {
-                            gestor.save(fileChooserData, primaryStage);
-                        } catch (IOException | ClassNotFoundException ex) {
-                            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                    if (!gestor.getConts()) {
+                        alert(primaryStage);
                     }
-
                 }
 
                 File file = fileChooserData.showOpenDialog(primaryStage);
@@ -217,11 +206,11 @@ public class Proyecto2Progra2 extends Application {
                             gestor.selectImage(primaryStage, graphicContextImage, fileChooserImage, canvasImage);
                         } else if (btDrawMosaic.isClicked((int) e.getX(), (int) e.getY())) {
                             if (gestor.getImage() && !gestor.isDefinedValue()) {
-                                
+
                                 dialogWidthHeigth();
                             }
                         } else if (btnSplit.isClicked((int) e.getX(), (int) e.getY())) {
-                            if (gestor.getSize() == 0 && !gestor.getImage()&& gestor.getBuff()) {
+                            if (gestor.getSize() == 0 && !gestor.getImage() && gestor.getBuff()) {
                                 dialogSize();
                             } else if (gestor.getImage() && gestor.getSize() != 0 && gestor.getBuff()) {
                                 gestor.imageChuncks(graphicContextImage, canvasImage);
@@ -260,24 +249,11 @@ public class Proyecto2Progra2 extends Application {
         }
         );
 
-        primaryStage.setOnCloseRequest(
-                new EventHandler<WindowEvent>() {
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
-            public void handle(WindowEvent event
-            ) {
-                ButtonType confirm = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
-                ButtonType cancel = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", confirm, cancel);
-                alert.setContentText("Do you wanna charge a proyect?");
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.isPresent() && result.get() == confirm) {
-                    try {
-                        gestor.save(fileChooserData, primaryStage);
-                    } catch (IOException ex) {
-                        Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+            public void handle(WindowEvent event) {
+                if (!gestor.getConts()) {
+                    alert(primaryStage);
                 }
             }
         }
@@ -320,6 +296,7 @@ public class Proyecto2Progra2 extends Application {
                     if (gestor.getMosaicChunk().getImageBytes().length != 0) {
                         ((ChunkMosaic) gestor.getMosaicChunk()).rotate(0);
                         ((ChunkMosaic) gestor.getMosaicChunk()).draw(graphicContextMosaic);
+                        gestor.mosaicChanges(0);
                     }
 
                 } else if (btnRotateI.getState() && event.getSource() == canvasMosaic) {
@@ -327,24 +304,29 @@ public class Proyecto2Progra2 extends Application {
                     if (gestor.getMosaicChunk().getImageBytes().length != 0) {
                         ((ChunkMosaic) gestor.getMosaicChunk()).rotate(1);
                         ((ChunkMosaic) gestor.getMosaicChunk()).draw(graphicContextMosaic);
+                        gestor.mosaicChanges(0);
                     }
                 } else if (btnFlipH.getState() && event.getSource() == canvasMosaic) {
                     gestor.selectAMosaic((int) event.getX(), (int) event.getY());
                     if (gestor.getMosaicChunk().getImageBytes().length != 0) {
                         ((ChunkMosaic) gestor.getMosaicChunk()).flipHorizontal(1); // Horizontal
                         gestor.getMosaicChunk().draw(graphicContextMosaic);
+                        gestor.mosaicChanges(0);
                     }
                 } else if (btnFlipV.getState() && event.getSource() == canvasMosaic) {
                     gestor.selectAMosaic((int) event.getX(), (int) event.getY());
                     if (gestor.getMosaicChunk().getImageBytes().length != 0) {
                         ((ChunkMosaic) gestor.getMosaicChunk()).flipVertical(1);
                         gestor.getMosaicChunk().draw(graphicContextMosaic);
+                        gestor.mosaicChanges(0);
                     }
                 } else if (event.getSource() == canvasMosaic && btnEraser.getState()) {
                     gestor.selectAMosaic((int) event.getX(), (int) event.getY());
                     gestor.delete(graphicContextMosaic, canvasMosaic);
+                    gestor.mosaicChanges(0);
                 } else if (event.getSource() == canvasMosaic && btnDraw.getState()) {
                     gestor.paintInMosaic((int) event.getX(), (int) event.getY(), graphicContextMosaic);
+                    gestor.mosaicChanges(0);
                 } else if (event.getSource() == canvasImage) {
                     if (gestor.getImage()) {
                         gestor.selectAChunckImage((int) event.getX(), (int) event.getY());
@@ -396,6 +378,7 @@ public class Proyecto2Progra2 extends Application {
         if (result.isPresent() && result.get() == confirmButtonType) {
             gestor.setSize(Integer.parseInt(size.getText()));
             gestor.imageChuncks(graphicContextImage, canvasImage);
+            gestor.imageChanges(0);
         }
     } // dialogSize
 
@@ -458,16 +441,18 @@ public class Proyecto2Progra2 extends Application {
         }
     } // dialogWidthHeigth
 
-    public boolean alert(Stage primaryStage) {
+    public void alert(Stage primaryStage) {
         ButtonType confirm = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancel = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", confirm, cancel);
         alert.setContentText("Do you want to save before continuing?");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == confirm) {
-            return true;
-        } else {
-            return false;
+            try {
+                gestor.save(fileChooserData, primaryStage);
+            } catch (IOException | ClassNotFoundException ex) {
+                Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     } // alert
 
