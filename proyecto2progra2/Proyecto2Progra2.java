@@ -318,22 +318,27 @@ public class Proyecto2Progra2 extends Application {
                     gestor.selectAMosaic((int) event.getX(), (int) event.getY());
                     if (gestor.getMosaicChunk().getImageBytes().length != 0) {
                         ((ChunkMosaic) gestor.getMosaicChunk()).rotate(0);
+                        ((ChunkMosaic) gestor.getMosaicChunk()).draw(graphicContextMosaic);
                     }
-                    ((ChunkMosaic) gestor.getMosaicChunk()).draw(graphicContextMosaic);
+
                 } else if (btnRotateI.getState() && event.getSource() == canvasMosaic) {
                     gestor.selectAMosaic((int) event.getX(), (int) event.getY());
                     if (gestor.getMosaicChunk().getImageBytes().length != 0) {
                         ((ChunkMosaic) gestor.getMosaicChunk()).rotate(1);
+                        ((ChunkMosaic) gestor.getMosaicChunk()).draw(graphicContextMosaic);
                     }
-                    ((ChunkMosaic) gestor.getMosaicChunk()).draw(graphicContextMosaic);
                 } else if (btnFlipH.getState() && event.getSource() == canvasMosaic) {
                     gestor.selectAMosaic((int) event.getX(), (int) event.getY());
-                    ((ChunkMosaic) gestor.getMosaicChunk()).flipHorizontal(1); // Horizontal
-                    gestor.getMosaicChunk().draw(graphicContextMosaic);
+                    if (gestor.getMosaicChunk().getImageBytes().length != 0) {
+                        ((ChunkMosaic) gestor.getMosaicChunk()).flipHorizontal(1); // Horizontal
+                        gestor.getMosaicChunk().draw(graphicContextMosaic);
+                    }
                 } else if (btnFlipV.getState() && event.getSource() == canvasMosaic) {
                     gestor.selectAMosaic((int) event.getX(), (int) event.getY());
-                    ((ChunkMosaic) gestor.getMosaicChunk()).flipVertical(1);
-                    gestor.getMosaicChunk().draw(graphicContextMosaic);
+                    if (gestor.getMosaicChunk().getImageBytes().length != 0) {
+                        ((ChunkMosaic) gestor.getMosaicChunk()).flipVertical(1);
+                        gestor.getMosaicChunk().draw(graphicContextMosaic);
+                    }
                 } else if (event.getSource() == canvasMosaic && btnEraser.getState()) {
                     gestor.selectAMosaic((int) event.getX(), (int) event.getY());
                     gestor.delete(graphicContextMosaic, canvasMosaic);

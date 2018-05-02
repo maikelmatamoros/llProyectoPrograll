@@ -53,8 +53,8 @@ public class Gestor {
                     this.size = this.chunkImage[0][0].getSize();
                     this.rowsImage = this.chunkImage.length;
                     this.colsImage = this.chunkImage[0].length;
-                    image.setHeight((this.rowsImage) * this.size + ((this.rowsImage + 1) * 10));
-                    image.setWidth((this.colsImage) * this.size + ((this.colsImage + 1) * 10));
+                    image.setHeight((this.rowsImage) * this.size + ((this.rowsImage + 1) * 5));
+                    image.setWidth((this.colsImage) * this.size + ((this.colsImage + 1) * 5));
                     for (int x = 0; x < this.rowsImage; x++) {
                         for (int y = 0; y < this.colsImage; y++) {
                             this.chunkImage[x][y].draw(gcI);
