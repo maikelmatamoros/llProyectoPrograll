@@ -6,41 +6,37 @@ import javafx.scene.image.Image;
 
 public class Button {
 
-    private int x, y, w, h;
+    private int x, y, width, heigth;
     private boolean state;
     private String name;
-    
-    public Button( int x, int y, int w, int h,String name) {
+
+    public Button(int x, int y, int width, int heigth, String name) {
         this.x = x;
         this.y = y;
-        this.w = w;
-        this.h = h;
-        this.state=false;
-        this.name=name;
+        this.width = width;
+        this.heigth = heigth;
+        this.state = false;
+        this.name = name;
     } // constructor
-    
-    
-    public void setAvailable() throws IOException{
-        this.state=!this.state;
 
-    }
+    public void setAvailable() throws IOException {
+        this.state = !this.state;
+    } // setAvailable
 
     public void draw(GraphicsContext gc) throws IOException {
-        
-        if(state){
-            gc.drawImage(new Image("/assets/"+name+"True.png"), x, y, w, h);
-        }else{
-            gc.drawImage(new Image("/assets/"+name+".png"), x, y, w, h);
+        if (state) {
+            gc.drawImage(new Image("/assets/" + name + "True.png"), x, y, width, heigth);
+        } else {
+            gc.drawImage(new Image("/assets/" + name + ".png"), x, y, width, heigth);
         }
-        
     } // draw
-    
-    public boolean getState(){
+
+    public boolean getState() {
         return this.state;
-    }
+    } // getState
 
     public boolean isClicked(int xMouse, int yMouse) {
-        if ((xMouse >= x && xMouse <= x + w) && (yMouse >= this.y && yMouse <= this.y + h)) {
+        if ((xMouse >= this.x && xMouse <= this.x + this.width) && (yMouse >= this.y && yMouse <= this.y + this.heigth)) {
             return true;
         }
         return false;

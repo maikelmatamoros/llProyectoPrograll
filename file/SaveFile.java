@@ -12,10 +12,7 @@ import java.util.List;
 
 public class SaveFile {
 
-
-
-    public SaveFile() {
-        
+    public SaveFile() {        
     } // constructor
 
     public void save(Chunk[][] matrizChunks, Chunk[][] matrizMosaicChunkses,String path) throws IOException, ClassNotFoundException {
@@ -46,6 +43,5 @@ public class SaveFile {
         } // if(myFile.exists())
         return previous;
     } // recover
-
 
 } // fin de la clase

@@ -23,7 +23,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;
-import proyecto2progra2.Proyecto2Progra2;
+import proyecto2progra2.Window;
 
 public class Gestor {
 
@@ -31,48 +31,47 @@ public class Gestor {
     private Chunk[][] chunkMosaic;
     private int size, rowsMosaic, colsMosaic = 0;
     private int rowsImage, colsImage, k, l, i, j;
-    private int contImageChanges,contMosaicChanges=0;
+    private int contImageChanges, contMosaicChanges = 0;
     private BufferedImage image;
-    
-    public void imageChanges(int action){
-        if(action==0){
+
+    public void imageChanges(int action) {
+        if (action == 0) {
             this.contImageChanges++;
-        }else{
-            this.contImageChanges=0;
+        } else {
+            this.contImageChanges = 0;
         }
-    }
-    public void mosaicChanges(int action){
-        if(action==0){
+    } // imageChanges
+
+    public void mosaicChanges(int action) {
+        if (action == 0) {
             this.contMosaicChanges++;
-        }else{
-            this.contMosaicChanges=0;
+        } else {
+            this.contMosaicChanges = 0;
         }
-    }
-    
-    public boolean getConts(){
-        if(contImageChanges==0 && contMosaicChanges==0){
+    } // mosaicChanges
+
+    public boolean getConts() {
+        if (contImageChanges == 0 && contMosaicChanges == 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
-    }
+    } // getConts
 
-    public void setState( ArrayList<Button> list, Button button) throws IOException {
-
+    public void setState(ArrayList<Button> list, Button button) throws IOException {
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getState()) {
                 list.get(i).setAvailable();
             }
-        }
+        } // for
         button.setAvailable();
-    }
+    } // setState
 
     public void reinit(Canvas image, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic, File file) {
         try {
             if (file.exists()) {
                 List<Chunk[][]> list = new SaveFile().recover(file);
                 if (list.get(0) != null) {
-
                     this.chunkImage = list.get(0);
                     this.size = this.chunkImage[0][0].getSize();
                     this.rowsImage = this.chunkImage.length;
@@ -86,7 +85,6 @@ public class Gestor {
                     } // for x
                 } // if (list.get(0) != null)
                 if (list.get(1) != null) {
-
                     this.chunkMosaic = list.get(1);
                     this.rowsMosaic = this.chunkMosaic.length;
                     this.colsMosaic = this.chunkMosaic[0].length;
@@ -97,12 +95,11 @@ public class Gestor {
                 } // if (list.get(1) != null)
             } // if (new File("save.dat").exists())
         } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
-        } // try-catch
+            Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+        } // try-catch // try-catch
     } // reinit
 
     public void drawGrid(GraphicsContext gcM, Canvas canvasMosaic) {
-        //initMosiacChunks();
         if (this.size > 0 && this.rowsMosaic > 0 && this.colsMosaic > 0) {
             canvasMosaic.setHeight(this.rowsMosaic * this.size);
             canvasMosaic.setWidth(this.colsMosaic * this.size);
@@ -145,16 +142,14 @@ public class Gestor {
                     this.chunkImage[x][y] = new ChunkFactory().createChunk(ChunkTypes.image, imageToBytes(aux), y, x, this.size);
                     this.chunkImage[x][y].draw(gc);
                     // draws the image chunk
-                } // for y
-                catch (IOException ex) {
-                    Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
+            } // for y
         } // for x
     } // imageChuncks
 
     public void selectImage(Stage primaryStage, GraphicsContext gc, FileChooser fileChooser, Canvas canvasImage) {
-
         File selectedDirectory = fileChooser.showOpenDialog(primaryStage);
         if (selectedDirectory != null) {
             try {
@@ -166,22 +161,17 @@ public class Gestor {
                         canvasImage.setHeight(this.image.getHeight());
                         canvasImage.setWidth(this.image.getWidth());
                         gc.drawImage(SwingFXUtils.toFXImage(this.image, null), 0, 0);
-
                     }
                 } else {
                     this.image = aux;
                     canvasImage.setHeight(this.image.getHeight());
                     canvasImage.setWidth(this.image.getWidth());
                     gc.drawImage(SwingFXUtils.toFXImage(this.image, null), 0, 0);
-
-                }
-
-            } // if
-            catch (IOException ex) {
-                Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+                } // if
+            } catch (IOException ex) {
+                Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
             }
         } // if (selectedDirectory != null)
-
     } // selectImage
 
     public void repaintMosaic(GraphicsContext gcM) {
@@ -192,15 +182,15 @@ public class Gestor {
                         chunkMosaic[x][y].draw(gcM);
                     }
                 } catch (IOException ex) {
-                    Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } // for y
         } // for x
     } // repaintMosaic
 
     public void exportMosaic(Stage primaryStage, GraphicsContext gcM, Canvas canvasMosaic, FileChooser fileChooser) {
-        if (chunkMosaic != null) {
-            gcM.clearRect(0, 0, colsMosaic * size, rowsMosaic * size);
+        if (this.chunkMosaic != null) {
+            gcM.clearRect(0, 0, this.colsMosaic * this.size, this.rowsMosaic * this.size);
             repaintMosaic(gcM);
             WritableImage wim = new WritableImage((int) Math.round(canvasMosaic.getWidth()), (int) Math.round(canvasMosaic.getHeight()));
             SnapshotParameters snapshotParameters = new SnapshotParameters();
@@ -208,20 +198,17 @@ public class Gestor {
             canvasMosaic.snapshot(snapshotParameters, wim);
             drawGrid(gcM, canvasMosaic);
             repaintMosaic(gcM);
-            String path=fileChooser.showSaveDialog(primaryStage).getPath()+".png";
-            File file =new File(path);
-            if (path!= null) {
+            String path = fileChooser.showSaveDialog(primaryStage).getPath() + ".png";
+            File file = new File(path);
+            if (path != null) {
                 try {
                     System.err.println("entra");
                     ImageIO.write(SwingFXUtils.fromFXImage(wim, null), "png", file);
                 } catch (IOException ex) {
-                    Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
-
-            //graphicContextMosaic.clearRect(0, 0, colsMosaic * size, rowsMosaic * size);
-        }
-
+            } // if
+        } // if (chunkMosaic != null)
     } // exportMosaic
 
     public void newProyect(Canvas canvasImage, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic) {
@@ -247,7 +234,6 @@ public class Gestor {
                 }
             } // for y
         } // for x
-
     } // selectAChunckImage
 
     public void selectAMosaic(int xP, int yP) {
@@ -258,41 +244,39 @@ public class Gestor {
                     l = y;
                     break;
                 }
-            }
-        }
+            } // for y
+        } // for x
     } // selectAMosaic
 
     public void paintInMosaic(int xP, int yP, GraphicsContext gcM) {
         selectAMosaic(xP, yP);
-        ((ChunkMosaic) chunkMosaic[k][l]).setRotation();
-        chunkMosaic[k][l].setImageBytes(chunkImage[i][j].getImageBytes());
+        ((ChunkMosaic) this.chunkMosaic[this.k][this.l]).setRotation();
+        this.chunkMosaic[this.k][this.l].setImageBytes(this.chunkImage[this.i][this.j].getImageBytes());
         try {
-            chunkMosaic[k][l].draw(gcM);
+            this.chunkMosaic[this.k][this.l].draw(gcM);
         } catch (IOException ex) {
-            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
         }
     } // paintInMosaic
 
     public void save(FileChooser fileChooser, Stage stage) throws IOException, ClassNotFoundException {
-        if(chunkImage!=null){
+        if (this.chunkImage != null) {
             File file = fileChooser.showSaveDialog(stage);
-        if (file != null) {
-            new SaveFile().save(chunkImage, chunkMosaic, file.getAbsolutePath());
-            imageChanges(1);
-            mosaicChanges(1);
+            if (file != null) {
+                new SaveFile().save(chunkImage, chunkMosaic, file.getAbsolutePath());
+                imageChanges(1);
+                mosaicChanges(1);
+            }
         }
-        }
-        
-
     } // save
-    
-    public boolean getBuff(){
-        if(this.image!=null){
+
+    public boolean getBuff() {
+        if (this.image != null) {
             return true;
-        }else{
+        } else {
             return false;
         }
-    }
+    } // getBuff
 
     public Chunk getMosaicChunk() {
         return this.chunkMosaic[k][l];
@@ -312,7 +296,7 @@ public class Gestor {
     } // getSize
 
     public boolean isDefinedValue() {
-        if (chunkMosaic!=null) {
+        if (chunkMosaic != null) {
             return true;
         } else {
             return false;
@@ -340,6 +324,6 @@ public class Gestor {
         ((ChunkMosaic) getMosaicChunk()).setImageBytes(new byte[0]);
         drawGrid(graphicContextMosaic, canvasMosaic);
         repaintMosaic(graphicContextMosaic);
-    }
+    } // delete
 
 } // fin de la clase

@@ -36,7 +36,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-public class Proyecto2Progra2 extends Application {
+public class Window extends Application {
 
     private final int WIDTH = 1360;
     private final int HEIGHT = 720;
@@ -59,7 +59,6 @@ public class Proyecto2Progra2 extends Application {
         primaryStage.setTitle("MosaicMaker");
         this.gestor = new Gestor();
         init(primaryStage);
-        //initComponents(primaryStage);
         primaryStage.resizableProperty().set(false);
         primaryStage.show();
     } // start
@@ -67,22 +66,22 @@ public class Proyecto2Progra2 extends Application {
     private void init(Stage primaryStage) {
         this.fileChooserData = new FileChooser();
         this.fileChooserImage = new FileChooser();
-        fileChooserImage.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Extends", "*.png", "*.jpg", "*.jpeg",
+        this.fileChooserImage.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Extends", "*.png", "*.jpg", "*.jpeg",
                 "*.gif", "*.bmp", "*.wbmp"));
-        fileChooserData.getExtensionFilters().add(new FileChooser.ExtensionFilter("Dat", "*.dat"));
+        this.fileChooserData.getExtensionFilters().add(new FileChooser.ExtensionFilter("Dat", "*.dat"));
         this.functionButtonList = new ArrayList<>();
         this.menuBar = new MenuBar();
         Menu menu = new Menu("File");
-        MenuItem newProyectItem = new MenuItem("New Proyect");
-        MenuItem openProyectItem = new MenuItem("Open Proyect");
-        MenuItem saveAsProyectItem = new MenuItem("Save As...");
+        MenuItem newProjectItem = new MenuItem("New Project");
+        MenuItem openProjectItem = new MenuItem("Open Project");
+        MenuItem saveAsProjecttItem = new MenuItem("Save As...");
         MenuItem exportImage = new MenuItem("Export");
-        menu.getItems().add(newProyectItem);
-        menu.getItems().add(openProyectItem);
-        menu.getItems().add(saveAsProyectItem);
+        menu.getItems().add(newProjectItem);
+        menu.getItems().add(openProjectItem);
+        menu.getItems().add(saveAsProjecttItem);
         menu.getItems().add(exportImage);
 
-        newProyectItem.setOnAction(new EventHandler<ActionEvent>() {
+        newProjectItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 if (gestor.getImage()) {
@@ -93,10 +92,10 @@ public class Proyecto2Progra2 extends Application {
                 } else {
                     initComponents(primaryStage);
                 }
-            }
+            } // handle
         });
 
-        openProyectItem.setOnAction(new EventHandler<ActionEvent>() {
+        openProjectItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 if (gestor.getImage()) {
@@ -110,18 +109,17 @@ public class Proyecto2Progra2 extends Application {
                     initComponents(primaryStage);
                     gestor.reinit(canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic, file);
                 }
-
-            }
+            } // handle
         });
 
-        saveAsProyectItem.setOnAction(new EventHandler<ActionEvent>() {
+        saveAsProjecttItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 if (gestor.getImage()) {
                     try {
                         gestor.save(fileChooserData, primaryStage);
                     } catch (IOException | ClassNotFoundException ex) {
-                        Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
 
@@ -137,7 +135,7 @@ public class Proyecto2Progra2 extends Application {
 
         this.menuBar.getMenus().add(menu);
         this.pane = new BorderPane();
-        this.pane.setTop(menuBar);
+        this.pane.setTop(this.menuBar);
         this.scene = new Scene(this.pane, WIDTH, HEIGHT);
         primaryStage.setScene(this.scene);
     } // init
@@ -158,26 +156,23 @@ public class Proyecto2Progra2 extends Application {
         this.btnRotateD = new Button(1000, 25, 70, 70, "rotateD");
         this.btnFlipH = new Button(1100, 25, 70, 70, "flipH");
         this.btnFlipV = new Button(1200, 25, 70, 70, "flipV");
-        this.functionButtonList.add(btnDraw);
-        this.functionButtonList.add(btnEraser);
-        this.functionButtonList.add(btnFlipH);
-        this.functionButtonList.add(btnFlipV);
-        this.functionButtonList.add(btnRotateD);
-        this.functionButtonList.add(btnRotateI);
+        this.functionButtonList.add(this.btnDraw);
+        this.functionButtonList.add(this.btnEraser);
+        this.functionButtonList.add(this.btnFlipH);
+        this.functionButtonList.add(this.btnFlipV);
+        this.functionButtonList.add(this.btnRotateD);
+        this.functionButtonList.add(this.btnRotateI);
         this.canvasImage = new Canvas(1000, 1000);
         this.canvasMosaic = new Canvas();
         this.canvasUtilities = new Canvas(1380, 160);
         this.canvasUtilities.relocate(0, 600);
         this.graphicsContextUtilities = this.canvasUtilities.getGraphicsContext2D();
+        
         try {
             this.btnDraw.setAvailable();
-        } catch (IOException ex) {
-            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
             drawButtons(this.graphicsContextUtilities);
         } catch (IOException ex) {
-            Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         this.scrollPaneImage.setContent(this.canvasImage);
@@ -206,7 +201,6 @@ public class Proyecto2Progra2 extends Application {
                             gestor.selectImage(primaryStage, graphicContextImage, fileChooserImage, canvasImage);
                         } else if (btDrawMosaic.isClicked((int) e.getX(), (int) e.getY())) {
                             if (gestor.getImage() && !gestor.isDefinedValue()) {
-
                                 dialogWidthHeigth();
                             }
                         } else if (btnSplit.isClicked((int) e.getX(), (int) e.getY())) {
@@ -216,36 +210,29 @@ public class Proyecto2Progra2 extends Application {
                                 gestor.imageChuncks(graphicContextImage, canvasImage);
                             }
                         } else if (btnEraser.isClicked((int) e.getX(), (int) e.getY())) {
-
                             gestor.setState(functionButtonList, btnEraser);
                             drawButtons(graphicsContextUtilities);
                         } else if (btnRotateD.isClicked((int) e.getX(), (int) e.getY())) {
-
                             gestor.setState(functionButtonList, btnRotateD);
                             drawButtons(graphicsContextUtilities);
                         } else if (btnRotateI.isClicked((int) e.getX(), (int) e.getY())) {
-
                             gestor.setState(functionButtonList, btnRotateI);
                             drawButtons(graphicsContextUtilities);
                         } else if (btnDraw.isClicked((int) e.getX(), (int) e.getY())) {
-
                             gestor.setState(functionButtonList, btnDraw);
                             drawButtons(graphicsContextUtilities);
                         } else if (btnFlipH.isClicked((int) e.getX(), (int) e.getY())) {
-
                             gestor.setState(functionButtonList, btnFlipH);
                             drawButtons(graphicsContextUtilities);
                         } else if (btnFlipV.isClicked((int) e.getX(), (int) e.getY())) {
-
                             gestor.setState(functionButtonList, btnFlipV);
                             drawButtons(graphicsContextUtilities);
                         } // else-if
                     } // if
-                    // handle
                 } catch (IOException ex) {
-                    Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
+            } // handle
         }
         );
 
@@ -259,17 +246,10 @@ public class Proyecto2Progra2 extends Application {
         }
         );
 
-        vBox.getChildren()
-                .add(this.scrollPaneImage);
-        vBox.getChildren()
-                .add(this.scrollPaneMosaic);
-
-        this.pane.setCenter(
-                this.vBox);
-
-        this.pane.setBottom(
-                this.canvasUtilities);
-
+        this.vBox.getChildren().add(this.scrollPaneImage);
+        this.vBox.getChildren().add(this.scrollPaneMosaic);
+        this.pane.setCenter(this.vBox);
+        this.pane.setBottom(this.canvasUtilities);
     } // initComponents
 
     private void drawButtons(GraphicsContext g) throws IOException {
@@ -286,7 +266,6 @@ public class Proyecto2Progra2 extends Application {
         this.btnDraw.draw(g);
     } // drawButtons
 
-    //                  
     EventHandler<MouseEvent> canvasClickEvent = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
@@ -298,7 +277,6 @@ public class Proyecto2Progra2 extends Application {
                         ((ChunkMosaic) gestor.getMosaicChunk()).draw(graphicContextMosaic);
                         gestor.mosaicChanges(0);
                     }
-
                 } else if (btnRotateI.getState() && event.getSource() == canvasMosaic) {
                     gestor.selectAMosaic((int) event.getX(), (int) event.getY());
                     if (gestor.getMosaicChunk().getImageBytes().length != 0) {
@@ -331,13 +309,11 @@ public class Proyecto2Progra2 extends Application {
                     if (gestor.getImage()) {
                         gestor.selectAChunckImage((int) event.getX(), (int) event.getY());
                     }// else-if
-                } // handle
-
+                }
             } catch (IOException ex) {
-                Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-
+        } // handle
     }; // canvasClickEvent
 
     public void dialogSize() {
@@ -451,7 +427,7 @@ public class Proyecto2Progra2 extends Application {
             try {
                 gestor.save(fileChooserData, primaryStage);
             } catch (IOException | ClassNotFoundException ex) {
-                Logger.getLogger(Proyecto2Progra2.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     } // alert
