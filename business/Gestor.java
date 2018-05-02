@@ -284,7 +284,7 @@ public class Gestor {
     } // getSize
 
     public boolean isDefinedValue() {
-        if (rowsMosaic != 0 && colsMosaic != 0) {
+        if (chunkMosaic!=null) {
             return true;
         } else {
             return false;

@@ -216,7 +216,7 @@ public class Proyecto2Progra2 extends Application {
                         if (btnSelectImage.isClicked((int) e.getX(), (int) e.getY())) {
                             gestor.selectImage(primaryStage, graphicContextImage, fileChooserImage, canvasImage);
                         } else if (btDrawMosaic.isClicked((int) e.getX(), (int) e.getY())) {
-                            if (gestor.getImage() && !gestor.getImage()) {
+                            if (gestor.getImage() && !gestor.isDefinedValue()) {
                                 
                                 dialogWidthHeigth();
                             }
