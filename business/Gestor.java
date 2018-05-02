@@ -257,6 +257,14 @@ public class Gestor {
         }
 
     } // save
+    
+    public boolean getBuff(){
+        if(this.image!=null){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     public Chunk getMosaicChunk() {
         return this.chunkMosaic[k][l];

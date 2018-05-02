@@ -216,13 +216,14 @@ public class Proyecto2Progra2 extends Application {
                         if (btnSelectImage.isClicked((int) e.getX(), (int) e.getY())) {
                             gestor.selectImage(primaryStage, graphicContextImage, fileChooserImage, canvasImage);
                         } else if (btDrawMosaic.isClicked((int) e.getX(), (int) e.getY())) {
-                            if (!gestor.isDefinedValue()) {
+                            if (gestor.getImage() && !gestor.getImage()) {
+                                
                                 dialogWidthHeigth();
                             }
                         } else if (btnSplit.isClicked((int) e.getX(), (int) e.getY())) {
-                            if (gestor.getSize() == 0 && !gestor.getImage()) {
+                            if (gestor.getSize() == 0 && !gestor.getImage()&& gestor.getBuff()) {
                                 dialogSize();
-                            } else if (gestor.getImage() && gestor.getSize() != 0) {
+                            } else if (gestor.getImage() && gestor.getSize() != 0 && gestor.getBuff()) {
                                 gestor.imageChuncks(graphicContextImage, canvasImage);
                             }
                         } else if (btnEraser.isClicked((int) e.getX(), (int) e.getY())) {

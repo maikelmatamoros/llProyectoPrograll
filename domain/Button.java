@@ -28,10 +28,8 @@ public class Button {
     public void draw(GraphicsContext gc) throws IOException {
         
         if(state){
-            System.out.println("/assets/"+name+"True.png");
             gc.drawImage(new Image("/assets/"+name+"True.png"), x, y, w, h);
         }else{
-            System.out.println("/assets/"+name+".png");
             gc.drawImage(new Image("/assets/"+name+".png"), x, y, w, h);
         }
         
