@@ -19,3 +19,5 @@ public class ChunkFactory {
     } // createChunk
 
 } // fin de la clase
+
+// Patrón de Diseño: Factory

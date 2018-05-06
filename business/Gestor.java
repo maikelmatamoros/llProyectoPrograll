@@ -40,7 +40,7 @@ public class Gestor {
         } else {
             this.contImageChanges = 0;
         }
-    } // imageChanges
+    } // imageChanges: contabiliza cambios en el canvasImage 
 
     public void mosaicChanges(int action) {
         if (action == 0) {
@@ -48,7 +48,7 @@ public class Gestor {
         } else {
             this.contMosaicChanges = 0;
         }
-    } // mosaicChanges
+    } // mosaicChanges: contaviliza los cambios del canvasMosaic
 
     public boolean getConts() {
         if (contImageChanges == 0 && contMosaicChanges == 0) {
@@ -56,7 +56,7 @@ public class Gestor {
         } else {
             return false;
         }
-    } // getConts
+    } // getConts: retorna true sino hay cambios, de lo contrario retorna false
 
     public void setState(ArrayList<Button> list, Button button) throws IOException {
         for (int i = 0; i < list.size(); i++) {
@@ -65,13 +65,13 @@ public class Gestor {
             }
         } // for
         button.setAvailable();
-    } // setState
+    } // setState: cambia el estado de los botones, activa el botón seleccionado y desactiva los demás
 
-    public void reinit(Canvas image, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic, File file) {
+    public void recharge(Canvas image, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic, File file) {
         try {
             if (file.exists()) {
-                List<Chunk[][]> list = new SaveFile().recover(file);
-                if (list.get(0) != null) {
+                List<Chunk[][]> list = new SaveFile().recover(file); // cargo lista con matrices guardadas
+                if (list.get(0) != null) { // si la matriz de la imagen no es null repinta la matriz de imágenes
                     this.chunkImage = list.get(0);
                     this.size = this.chunkImage[0][0].getSize();
                     this.rowsImage = this.chunkImage.length;
@@ -83,9 +83,9 @@ public class Gestor {
                             this.chunkImage[x][y].draw(gcI);
                         } // for y
                     } // for x
-                } // if (list.get(0) != null)
-                if (list.get(1) != null) {
-                    this.chunkMosaic = list.get(1);
+                } // 
+                if (list.get(1) != null) { // si la matriz del mosaico no es null
+                    this.chunkMosaic = list.get(1); // si la matriz del mosaico no es null repunta el mosaico guardado
                     this.rowsMosaic = this.chunkMosaic.length;
                     this.colsMosaic = this.chunkMosaic[0].length;
                     canvasMosaic.setHeight(this.rowsMosaic * this.size);
@@ -93,11 +93,11 @@ public class Gestor {
                     drawGrid(gcM, canvasMosaic);
                     repaintMosaic(gcM);
                 } // if (list.get(1) != null)
-            } // if (new File("save.dat").exists())
+            } // if (new File("saveProject.dat").exists())
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
         } // try-catch
-    } // reinit
+    } // recharge: repinta imagen y mosaico guardado
 
     public void drawGrid(GraphicsContext gcM, Canvas canvasMosaic) {
         if (this.size > 0 && this.rowsMosaic > 0 && this.colsMosaic > 0) {
@@ -110,46 +110,45 @@ public class Gestor {
                 gcM.strokeLine(y * this.size, 0, y * size, size * this.rowsMosaic); // cols
             } // for y
         } // if (size > 0 && rowsMosaic > 0 && colsMosaic > 0)
-    } // drawGrid
+    } // drawGrid: dibuja las lineas del mosaico
 
     public byte[] imageToBytes(BufferedImage image) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(image, "png", baos);
         return baos.toByteArray();
-    } // imageToBytes
+    } // imageToBytes: retorna arreglo de bytes de un BufferedImage
 
-    public void initMosiacChunks() {
+    public void initMosiacMatrix() {
         this.chunkMosaic = new ChunkMosaic[this.rowsMosaic][this.colsMosaic];
         for (int x = 0; x < this.rowsMosaic; x++) {
             for (int y = 0; y < this.colsMosaic; y++) {
                 this.chunkMosaic[x][y] = new ChunkFactory().createChunk(ChunkTypes.mosaic, new byte[0], y, x, this.size);
             } // for y
         } // for x
-    } // initMosiacChunks
+    } // initMosiacMatrix: inicia la matriz del mosaico en null
 
-    public void imageChuncks(GraphicsContext gc, Canvas canvasImage) {
+    public void split(GraphicsContext gc, Canvas canvasImage) {
         gc.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
         this.rowsImage = (int) (this.image.getHeight() / this.size);
-        this.colsImage = (int) (this.image.getWidth() / this.size); // determines the chunk width and height
+        this.colsImage = (int) (this.image.getWidth() / this.size);
         canvasImage.setHeight((this.rowsImage) * this.size + ((this.rowsImage + 1) * 2));
         canvasImage.setWidth((this.colsImage) * this.size + ((this.colsImage + 1) * 2));
         this.chunkImage = new ChunkImage[this.rowsImage][this.colsImage];
         for (int x = 0; x < this.rowsImage; x++) {
             for (int y = 0; y < this.colsImage; y++) {
                 try {
-                    //Initialize the image array with image chunks
+                    //Inicia la matriz de imágenes con chunk
                     BufferedImage aux = image.getSubimage((y * this.size), (x * this.size), this.size, this.size);
                     this.chunkImage[x][y] = new ChunkFactory().createChunk(ChunkTypes.image, imageToBytes(aux), y, x, this.size);
                     this.chunkImage[x][y].draw(gc);
-                    // draws the image chunk
                 } catch (IOException ex) {
                     Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } // for y
         } // for x
-    } // imageChuncks
+    } // split: divide la imagen cargada en chunks
 
-    public void selectImage(Stage primaryStage, GraphicsContext gc, FileChooser fileChooser, Canvas canvasImage) {
+    public void selectAnImage(Stage primaryStage, GraphicsContext gc, FileChooser fileChooser, Canvas canvasImage) {
         File selectedDirectory = fileChooser.showOpenDialog(primaryStage);
         if (selectedDirectory != null) {
             try {
@@ -172,7 +171,7 @@ public class Gestor {
                 Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
             }
         } // if (selectedDirectory != null)
-    } // selectImage
+    } // selectAnImage: selecciona una imagen con un fileChooser
 
     public void repaintMosaic(GraphicsContext gcM) {
         for (int x = 0; x < rowsMosaic; x++) {
@@ -186,7 +185,7 @@ public class Gestor {
                 }
             } // for y
         } // for x
-    } // repaintMosaic
+    } // repaintMosaic: pinta en el canvas del mosaico los chunks no nulos
 
     public void exportMosaic(Stage primaryStage, GraphicsContext gcM, Canvas canvasMosaic, FileChooser fileChooser) {
         if (this.chunkMosaic != null) {
@@ -208,7 +207,7 @@ public class Gestor {
                 }
             } // if
         } // if (chunkMosaic != null)
-    } // exportMosaic
+    } // exportMosaic: exporta el mosaico en formato png
 
     public void newProyect(Canvas canvasImage, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic) {
         this.chunkMosaic = null;
@@ -221,7 +220,7 @@ public class Gestor {
         this.image = null;
         gcI.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
         gcM.clearRect(0, 0, canvasMosaic.getWidth(), canvasMosaic.getHeight());
-    } // newProyect
+    } // newProyect: reinicia todo
 
     public void selectAChunckImage(int xP, int yP) {
         for (int x = 0; x < rowsImage; x++) {
@@ -233,7 +232,7 @@ public class Gestor {
                 }
             } // for y
         } // for x
-    } // selectAChunckImage
+    } // selectAChunckImage: guarda en la variable i, j la posición del cunk seleccionado en la matriz de la imagen
 
     public void selectAMosaic(int xP, int yP) {
         for (int x = 0; x < rowsMosaic; x++) {
@@ -245,20 +244,20 @@ public class Gestor {
                 }
             } // for y
         } // for x
-    } // selectAMosaic
+    } // selectAMosaic: guarda en la variable k, l la posición del cunk seleccionado en la matriz del mosaico
 
     public void paintInMosaic(int xP, int yP, GraphicsContext gcM) {
         selectAMosaic(xP, yP);
-        ((ChunkMosaic) this.chunkMosaic[this.k][this.l]).setRotation();
+        ((ChunkMosaic) this.chunkMosaic[this.k][this.l]).setInitialValues();
         this.chunkMosaic[this.k][this.l].setImageBytes(this.chunkImage[this.i][this.j].getImageBytes());
         try {
             this.chunkMosaic[this.k][this.l].draw(gcM);
         } catch (IOException ex) {
             Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
         }
-    } // paintInMosaic
+    } // paintInMosaic: pinta la imagen del chunk seleccionado del canvasImage en el chunk del canvasMosaic clickeado
 
-    public void save(FileChooser fileChooser, Stage stage) throws IOException, ClassNotFoundException {
+    public void saveProject(FileChooser fileChooser, Stage stage) throws IOException, ClassNotFoundException {
         if (this.chunkImage != null) {
             File file = fileChooser.showSaveDialog(stage);
             if (file != null) {
@@ -267,40 +266,40 @@ public class Gestor {
                 mosaicChanges(1);
             }
         }
-    } // save
+    } // saveProject: guarda el proyecto
 
-    public boolean getBuff() {
+    public boolean getImageSelected() {
         if (this.image != null) {
             return true;
         } else {
             return false;
         }
-    } // getBuff
+    } // getImageSelected: retorna true si hay una imagen cargada en el canvasImage
 
     public Chunk getMosaicChunk() {
         return this.chunkMosaic[k][l];
-    } // getMosaicChunk
+    } // getMosaicChunk: retorna el chunk del canvasMosaic seleccionado
 
-    public void setMosaicsParameters(int rows, int cols) {
-        this.rowsMosaic = rows / size;
-        this.colsMosaic = cols / size;
-    } // setMosaicsParameters
+    public void setMosaicsParameters(int heigth, int width) {
+        this.rowsMosaic = heigth / size;
+        this.colsMosaic = width / size;
+    } // setMosaicsParameters: da valor a las variables globales del tamaño de las matrices
 
     public void setSize(int size) {
         this.size = size;
-    } // setSize
+    } // setSize: da valor de los chunk a la variable global size 
 
     public int getSize() {
         return this.size;
-    } // getSize
+    } // getSize: retorna el valor del size de los chunks
 
-    public boolean isDefinedValue() {
+    public boolean isDefinedMosaic() {
         if (chunkMosaic != null) {
             return true;
         } else {
             return false;
         }
-    } // isDefinedValue
+    } // isDefinedMosaic: retorna true si el mosaico tiene algún chunk
 
     public int getSmaller() {
         if (this.image.getHeight() > this.image.getWidth()) {
@@ -308,21 +307,23 @@ public class Gestor {
         } else {
             return this.image.getHeight();
         }
-    } // getSmaller
+    } // getSmaller: retorna menor valor entre las dimenciones de la imagen
 
-    public boolean getImage() {
+    public boolean isSplitted() {
         if (this.chunkImage != null) {
             return true;
         } else {
             return false;
         }
-    } // getImage
+    } // isSplitted: retorna true si ya se hizo split, de lo contrario retona false
 
     public void delete(GraphicsContext graphicContextMosaic, Canvas canvasMosaic) {
         graphicContextMosaic.clearRect(0, 0, canvasMosaic.getWidth(), canvasMosaic.getHeight());
         ((ChunkMosaic) getMosaicChunk()).setImageBytes(new byte[0]);
         drawGrid(graphicContextMosaic, canvasMosaic);
         repaintMosaic(graphicContextMosaic);
-    } // delete
+    } // delete: borra el chunk del mosaico seleccionado
 
 } // fin de la clase
+
+// Patrón de diseño: Facade

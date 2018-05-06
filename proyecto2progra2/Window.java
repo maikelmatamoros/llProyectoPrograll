@@ -84,7 +84,7 @@ public class Window extends Application {
         newProjectItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (gestor.getImage()) {
+                if (gestor.isSplitted()) {
                     if (!gestor.getConts()) {
                         alert(primaryStage);
                     }
@@ -98,7 +98,7 @@ public class Window extends Application {
         openProjectItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (gestor.getImage()) {
+                if (gestor.isSplitted()) {
                     if (!gestor.getConts()) {
                         alert(primaryStage);
                     }
@@ -107,7 +107,7 @@ public class Window extends Application {
                 File file = fileChooserData.showOpenDialog(primaryStage);
                 if (file != null) {
                     initComponents(primaryStage);
-                    gestor.reinit(canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic, file);
+                    gestor.recharge(canvasImage, graphicContextImage, graphicContextMosaic, canvasMosaic, file);
                 }
             } // handle
         });
@@ -115,9 +115,9 @@ public class Window extends Application {
         saveAsProjecttItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (gestor.getImage()) {
+                if (gestor.isSplitted()) {
                     try {
-                        gestor.save(fileChooserData, primaryStage);
+                        gestor.saveProject(fileChooserData, primaryStage);
                     } catch (IOException | ClassNotFoundException ex) {
                         Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -138,7 +138,7 @@ public class Window extends Application {
         this.pane.setTop(this.menuBar);
         this.scene = new Scene(this.pane, WIDTH, HEIGHT);
         primaryStage.setScene(this.scene);
-    } // init
+    } // init: inicia el menú
 
     private void initComponents(Stage primaryStage) {
         this.vBox = new HBox();
@@ -198,16 +198,16 @@ public class Window extends Application {
                 try {
                     if (e.getSource() == canvasUtilities) {
                         if (btnSelectImage.isClicked((int) e.getX(), (int) e.getY())) {
-                            gestor.selectImage(primaryStage, graphicContextImage, fileChooserImage, canvasImage);
+                            gestor.selectAnImage(primaryStage, graphicContextImage, fileChooserImage, canvasImage);
                         } else if (btDrawMosaic.isClicked((int) e.getX(), (int) e.getY())) {
-                            if (gestor.getImage() && !gestor.isDefinedValue()) {
+                            if (gestor.isSplitted() && !gestor.isDefinedMosaic()) {
                                 dialogWidthHeigth();
                             }
                         } else if (btnSplit.isClicked((int) e.getX(), (int) e.getY())) {
-                            if (gestor.getSize() == 0 && !gestor.getImage() && gestor.getBuff()) {
+                            if (gestor.getSize() == 0 && !gestor.isSplitted() && gestor.getImageSelected()) {
                                 dialogSize();
-                            } else if (gestor.getImage() && gestor.getSize() != 0 && gestor.getBuff()) {
-                                gestor.imageChuncks(graphicContextImage, canvasImage);
+                            } else if (gestor.isSplitted() && gestor.getSize() != 0 && gestor.getImageSelected()) {
+                                gestor.split(graphicContextImage, canvasImage);
                             }
                         } else if (btnEraser.isClicked((int) e.getX(), (int) e.getY())) {
                             gestor.setState(functionButtonList, btnEraser);
@@ -250,7 +250,7 @@ public class Window extends Application {
         this.vBox.getChildren().add(this.scrollPaneMosaic);
         this.pane.setCenter(this.vBox);
         this.pane.setBottom(this.canvasUtilities);
-    } // initComponents
+    } // initComponents: inicia componentes básicos
 
     private void drawButtons(GraphicsContext g) throws IOException {
         g.clearRect(0, 0, 1380, 160);
@@ -264,7 +264,7 @@ public class Window extends Application {
         this.btnFlipH.draw(g);
         this.btnFlipV.draw(g);
         this.btnDraw.draw(g);
-    } // drawButtons
+    } // drawButtons: dibuja el fondo y los botones
 
     EventHandler<MouseEvent> canvasClickEvent = new EventHandler<MouseEvent>() {
         @Override
@@ -306,7 +306,7 @@ public class Window extends Application {
                     gestor.paintInMosaic((int) event.getX(), (int) event.getY(), graphicContextMosaic);
                     gestor.mosaicChanges(0);
                 } else if (event.getSource() == canvasImage) {
-                    if (gestor.getImage()) {
+                    if (gestor.isSplitted()) {
                         gestor.selectAChunckImage((int) event.getX(), (int) event.getY());
                     }// else-if
                 }
@@ -317,16 +317,13 @@ public class Window extends Application {
     }; // canvasClickEvent
 
     public void dialogSize() {
-        // Create the custom dialog.
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Size Dialog");
         dialog.setHeaderText("Please select a size beetwen 50 and " + gestor.getSmaller());
 
-        // Set the button types.
         ButtonType confirmButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);
 
-        // Create the username and password labels and fields.
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -338,11 +335,9 @@ public class Window extends Application {
         grid.add(new Label("Size"), 0, 0);
         grid.add(size, 1, 0);
 
-        // Enable/Disable login button depending on whether a username was entered.
         Node loginButton = dialog.getDialogPane().lookupButton(confirmButtonType);
         loginButton.setDisable(true);
 
-        // Do some validation (using the Java 8 lambda syntax).
         size.textProperty().addListener((observable, oldValue, newValue) -> {
             loginButton.setDisable(!(newValue.matches("\\d{1,4}")
                     && Integer.parseInt(newValue) >= 50 && Integer.parseInt(newValue) <= gestor.getSmaller()));
@@ -353,10 +348,10 @@ public class Window extends Application {
 
         if (result.isPresent() && result.get() == confirmButtonType) {
             gestor.setSize(Integer.parseInt(size.getText()));
-            gestor.imageChuncks(graphicContextImage, canvasImage);
+            gestor.split(graphicContextImage, canvasImage);
             gestor.imageChanges(0);
         }
-    } // dialogSize
+    } // dialogSize: inicia la ventana emergente que le pide al usuario el tamaño de los chunks
 
     public void dialogWidthHeigth() {
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -413,9 +408,9 @@ public class Window extends Application {
         if (result.isPresent() && result.get() == confirmButtonType) {
             gestor.setMosaicsParameters(Integer.parseInt(heigth.getText()), Integer.parseInt(width.getText()));
             gestor.drawGrid(graphicContextMosaic, canvasMosaic);
-            gestor.initMosiacChunks();
+            gestor.initMosiacMatrix();
         }
-    } // dialogWidthHeigth
+    } // dialogWidthHeigth: inicia la ventana emergente que le pide al usuario las dimenciones del mosaico
 
     public void alert(Stage primaryStage) {
         ButtonType confirm = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
@@ -425,12 +420,12 @@ public class Window extends Application {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == confirm) {
             try {
-                gestor.save(fileChooserData, primaryStage);
+                gestor.saveProject(fileChooserData, primaryStage);
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    } // alert
+    } // alert: despliega una alerta para guardar cambios antes de cerrar la aplicación
 
     public static void main(String[] args) {
         launch(args);

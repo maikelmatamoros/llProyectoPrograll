@@ -26,6 +26,6 @@ public class ChunkImage extends Chunk {
             return true;
         }
         return false;
-    } // chunkClicked
+    } // chunkClicked: retorna true si el chunk fue ckickeado, de lo contrario false
 
 } // fin de la clase

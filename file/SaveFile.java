@@ -15,7 +15,7 @@ public class SaveFile {
     public SaveFile() {
     } // constructor
 
-    public void save(Chunk[][] matrizChunks, Chunk[][] matrizMosaicChunkses, String path) throws IOException, ClassNotFoundException {
+    public void save(Chunk[][] matrixChunks, Chunk[][] matrixMosaicChunks, String path) throws IOException, ClassNotFoundException {
         File file;
         if (new File(path).exists()) {
             file = new File(path);
@@ -23,12 +23,12 @@ public class SaveFile {
             file = new File(path + ".dat");
         }
         List<Chunk[][]> previous = new ArrayList<>();
-        previous.add(matrizChunks);
-        previous.add(matrizMosaicChunkses);
+        previous.add(matrixChunks);
+        previous.add(matrixMosaicChunks);
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(file));
         objectOutputStream.writeUnshared(previous);
         objectOutputStream.close();
-    } // save
+    } // save: guarda en archivo .dat las matrices del canvasImage y del mosaicImage
 
     public List<Chunk[][]> recover(File file) throws IOException, ClassNotFoundException {
         List<Chunk[][]> previous = new ArrayList<>();
@@ -42,6 +42,6 @@ public class SaveFile {
             objectInputStream.close();
         } // if(myFile.exists())
         return previous;
-    } // recover
+    } // recover: retorna lista con las matrices de las 
 
 } // fin de la clase
