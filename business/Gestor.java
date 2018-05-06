@@ -1,6 +1,5 @@
 package business;
 
-import Utils.ChunkTypes;
 import domain.Button;
 import domain.Chunk;
 import domain.ChunkImage;
@@ -122,7 +121,7 @@ public class Gestor {
         this.chunkMosaic = new ChunkMosaic[this.rowsMosaic][this.colsMosaic];
         for (int x = 0; x < this.rowsMosaic; x++) {
             for (int y = 0; y < this.colsMosaic; y++) {
-                this.chunkMosaic[x][y] = new ChunkFactory().createChunk(ChunkTypes.mosaic, new byte[0], y, x, this.size);
+                this.chunkMosaic[x][y] = new ChunkMosaic( new byte[0], y, x, this.size);
             } // for y
         } // for x
     } // initMosiacMatrix: inicia la matriz del mosaico en null
@@ -139,7 +138,7 @@ public class Gestor {
                 try {
                     //Inicia la matriz de imágenes con chunk
                     BufferedImage aux = image.getSubimage((y * this.size), (x * this.size), this.size, this.size);
-                    this.chunkImage[x][y] = new ChunkFactory().createChunk(ChunkTypes.image, imageToBytes(aux), y, x, this.size);
+                    this.chunkImage[x][y] = new ChunkImage(imageToBytes(aux), y, x, this.size);
                     this.chunkImage[x][y].draw(gc);
                 } catch (IOException ex) {
                     Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
