@@ -96,7 +96,7 @@ public class Gestor {
             } // if (new File("save.dat").exists())
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
-        } // try-catch // try-catch
+        } // try-catch
     } // reinit
 
     public void drawGrid(GraphicsContext gcM, Canvas canvasMosaic) {
@@ -131,8 +131,8 @@ public class Gestor {
         gc.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
         this.rowsImage = (int) (this.image.getHeight() / this.size);
         this.colsImage = (int) (this.image.getWidth() / this.size); // determines the chunk width and height
-        canvasImage.setHeight((this.rowsImage) * this.size + ((this.rowsImage + 1) * 5));
-        canvasImage.setWidth((this.colsImage) * this.size + ((this.colsImage + 1) * 5));
+        canvasImage.setHeight((this.rowsImage) * this.size + ((this.rowsImage + 1) * 2));
+        canvasImage.setWidth((this.colsImage) * this.size + ((this.colsImage + 1) * 2));
         this.chunkImage = new ChunkImage[this.rowsImage][this.colsImage];
         for (int x = 0; x < this.rowsImage; x++) {
             for (int y = 0; y < this.colsImage; y++) {
@@ -167,7 +167,7 @@ public class Gestor {
                     canvasImage.setHeight(this.image.getHeight());
                     canvasImage.setWidth(this.image.getWidth());
                     gc.drawImage(SwingFXUtils.toFXImage(this.image, null), 0, 0);
-                } // if
+                }
             } catch (IOException ex) {
                 Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -202,7 +202,6 @@ public class Gestor {
             File file = new File(path);
             if (path != null) {
                 try {
-                    System.err.println("entra");
                     ImageIO.write(SwingFXUtils.fromFXImage(wim, null), "png", file);
                 } catch (IOException ex) {
                     Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);

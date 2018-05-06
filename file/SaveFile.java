@@ -12,15 +12,15 @@ import java.util.List;
 
 public class SaveFile {
 
-    public SaveFile() {        
+    public SaveFile() {
     } // constructor
 
-    public void save(Chunk[][] matrizChunks, Chunk[][] matrizMosaicChunkses,String path) throws IOException, ClassNotFoundException {
+    public void save(Chunk[][] matrizChunks, Chunk[][] matrizMosaicChunkses, String path) throws IOException, ClassNotFoundException {
         File file;
-        if(new File(path).exists()){
+        if (new File(path).exists()) {
             file = new File(path);
-        }else{
-            file=new File(path+".dat");
+        } else {
+            file = new File(path + ".dat");
         }
         List<Chunk[][]> previous = new ArrayList<>();
         previous.add(matrizChunks);

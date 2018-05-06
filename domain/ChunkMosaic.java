@@ -54,15 +54,15 @@ public class ChunkMosaic extends Chunk {
         } else { // izquierda
             this.horizontal = 0;
             this.negativoHorizontal = 1;
-        }  
+        }
     } // flip
 
     public void flipVertical(int click) {
         if (click == 1) { // abajo
-            if(this.vertical == this.size){
+            if (this.vertical == this.size) {
                 this.vertical = 0;
                 this.negativoVertical = 1;
-            }else{
+            } else {
                 this.vertical = this.size;
                 this.negativoVertical = -1;
             }
@@ -77,8 +77,8 @@ public class ChunkMosaic extends Chunk {
         ImageView imageView = new ImageView(SwingFXUtils.toFXImage(bytesToImage(), null));
         imageView.setRotate(imageView.getRotate() + this.rotation);
         SnapshotParameters snapshot = new SnapshotParameters();
-        gc.drawImage(imageView.snapshot(snapshot, null), this.x * this.size + this.horizontal, this.y * 
-                this.size + this.vertical, this.size * this.negativoHorizontal, this.size * this.negativoVertical);
+        gc.drawImage(imageView.snapshot(snapshot, null), this.x * this.size + this.horizontal, this.y
+                * this.size + this.vertical, this.size * this.negativoHorizontal, this.size * this.negativoVertical);
     } // draw
 
     @Override
