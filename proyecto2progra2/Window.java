@@ -318,7 +318,7 @@ public class Window extends Application {
 
     public void dialogSize() {
         Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Size Dialog");
+        dialog.setTitle("Size Chunk");
         dialog.setHeaderText("Please select a size beetwen 50 and " + gestor.getSmaller());
 
         ButtonType confirmButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
