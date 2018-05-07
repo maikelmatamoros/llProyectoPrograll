@@ -355,8 +355,8 @@ public class Window extends Application {
 
     public void dialogWidthHeigth() {
         Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Mosaic dimention Dialog");
-        dialog.setHeaderText("please write a width and a height between " + gestor.getSize() + " and 1680");
+        dialog.setTitle("Mosaic Dimention Dialog");
+        dialog.setHeaderText("Please write a width and a height between " + gestor.getSize() + " and 1680");
 
         ButtonType confirmButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);
@@ -380,24 +380,24 @@ public class Window extends Application {
         loginButton.setDisable(true);
 
         width.textProperty().addListener((observable, oldValue, newValue) -> {
-            if ((newValue.matches("\\d{1,4}") && Integer.parseInt(newValue) > gestor.getSize() && Integer.parseInt(newValue) <= 1680)) {
-                aux1 = true;
+            if ((newValue.matches("\\d{1,4}") && Integer.parseInt(newValue) >= gestor.getSize() && Integer.parseInt(newValue) <= 1680)) {
+                this.aux1 = true;
             } else {
-                aux1 = false;
+                this.aux1 = false;
             }
-            if (aux1 && aux2) {
+            if (this.aux1 && this.aux2) {
                 loginButton.setDisable(false);
             } else {
                 loginButton.setDisable(true);
             }
         });
         heigth.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.matches("\\d{1,4}") && Integer.parseInt(newValue) > gestor.getSize() && Integer.parseInt(newValue) <= 1680) {
-                aux2 = true;
+            if (newValue.matches("\\d{1,4}") && Integer.parseInt(newValue) >= this.gestor.getSize() && Integer.parseInt(newValue) <= 1680) {
+                this.aux2 = true;
             } else {
-                aux2 = false;
+                this.aux2 = false;
             }
-            if (aux1 && aux2) {
+            if (this.aux1 && this.aux2) {
                 loginButton.setDisable(false);
             } else {
                 loginButton.setDisable(true);

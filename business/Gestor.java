@@ -50,7 +50,7 @@ public class Gestor {
     } // mosaicChanges: contaviliza los cambios del canvasMosaic
 
     public boolean getConts() {
-        if (contImageChanges == 0 && contMosaicChanges == 0) {
+        if (this.contImageChanges == 0 && this.contMosaicChanges == 0) {
             return true;
         } else {
             return false;
@@ -66,7 +66,7 @@ public class Gestor {
         button.setAvailable();
     } // setState: cambia el estado de los botones, activa el botón seleccionado y desactiva los demás
 
-    public void recharge(Canvas image, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic, File file) {
+    public void recharge(Canvas canvasImage, GraphicsContext gcI, GraphicsContext gcM, Canvas canvasMosaic, File file) {
         try {
             if (file.exists()) {
                 List<Chunk[][]> list = new SaveFile().recover(file); // cargo lista con matrices guardadas
@@ -75,8 +75,8 @@ public class Gestor {
                     this.size = this.chunkImage[0][0].getSize();
                     this.rowsImage = this.chunkImage.length;
                     this.colsImage = this.chunkImage[0].length;
-                    image.setHeight((this.rowsImage) * this.size + ((this.rowsImage + 1) * 5));
-                    image.setWidth((this.colsImage) * this.size + ((this.colsImage + 1) * 5));
+                    canvasImage.setHeight((this.rowsImage) * this.size + ((this.rowsImage + 1) * 5));
+                    canvasImage.setWidth((this.colsImage) * this.size + ((this.colsImage + 1) * 5));
                     for (int x = 0; x < this.rowsImage; x++) {
                         for (int y = 0; y < this.colsImage; y++) {
                             this.chunkImage[x][y].draw(gcI);
@@ -106,7 +106,7 @@ public class Gestor {
                 gcM.strokeLine(0, x * this.size, this.colsMosaic * this.size, x * this.size); // rows
             } // for x
             for (int y = 0; y <= this.colsMosaic; y++) {
-                gcM.strokeLine(y * this.size, 0, y * size, size * this.rowsMosaic); // cols
+                gcM.strokeLine(y * this.size, 0, y * this.size, this.size * this.rowsMosaic); // cols
             } // for y
         } // if (size > 0 && rowsMosaic > 0 && colsMosaic > 0)
     } // drawGrid: dibuja las lineas del mosaico
@@ -137,7 +137,7 @@ public class Gestor {
             for (int y = 0; y < this.colsImage; y++) {
                 try {
                     //Inicia la matriz de imágenes con chunk
-                    BufferedImage aux = image.getSubimage((y * this.size), (x * this.size), this.size, this.size);
+                    BufferedImage aux = this.image.getSubimage((y * this.size), (x * this.size), this.size, this.size);
                     this.chunkImage[x][y] = new ChunkImage(imageToBytes(aux), y, x, this.size);
                     this.chunkImage[x][y].draw(gc);
                 } catch (IOException ex) {
@@ -174,11 +174,11 @@ public class Gestor {
     } // selectAnImage: selecciona una imagen con un fileChooser
 
     public void repaintMosaic(GraphicsContext gcM) {
-        for (int x = 0; x < rowsMosaic; x++) {
-            for (int y = 0; y < colsMosaic; y++) {
+        for (int x = 0; x < this.rowsMosaic; x++) {
+            for (int y = 0; y < this.colsMosaic; y++) {
                 try {
-                    if (chunkMosaic[x][y].getImageBytes().length != 0) {
-                        chunkMosaic[x][y].draw(gcM);
+                    if (this.chunkMosaic[x][y].getImageBytes().length != 0) {
+                        this.chunkMosaic[x][y].draw(gcM);
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
@@ -223,11 +223,11 @@ public class Gestor {
     } // newProyect: reinicia todo
 
     public void selectAChunckImage(int xP, int yP) {
-        for (int x = 0; x < rowsImage; x++) {
-            for (int y = 0; y < colsImage; y++) {
-                if (chunkImage[x][y].chunkClicked(xP, yP)) {
-                    i = x;
-                    j = y;
+        for (int x = 0; x < this.rowsImage; x++) {
+            for (int y = 0; y < this.colsImage; y++) {
+                if (this.chunkImage[x][y].chunkClicked(xP, yP)) {
+                    this.i = x;
+                    this.j = y;
                     break;
                 }
             } // for y
@@ -235,11 +235,11 @@ public class Gestor {
     } // selectAChunckImage: guarda en la variable i, j la posición del cunk seleccionado en la matriz de la imagen
 
     public void selectAMosaic(int xP, int yP) {
-        for (int x = 0; x < rowsMosaic; x++) {
-            for (int y = 0; y < colsMosaic; y++) {
-                if (chunkMosaic[x][y].chunkClicked(xP, yP)) {
-                    k = x;
-                    l = y;
+        for (int x = 0; x < this.rowsMosaic; x++) {
+            for (int y = 0; y < this.colsMosaic; y++) {
+                if (this.chunkMosaic[x][y].chunkClicked(xP, yP)) {
+                    this.k = x;
+                    this.l = y;
                     break;
                 }
             } // for y
@@ -261,7 +261,7 @@ public class Gestor {
         if (this.chunkImage != null) {
             File file = fileChooser.showSaveDialog(stage);
             if (file != null) {
-                new SaveFile().save(chunkImage, chunkMosaic, file.getAbsolutePath());
+                new SaveFile().save(this.chunkImage, this.chunkMosaic, file.getAbsolutePath());
                 imageChanges(1);
                 mosaicChanges(1);
             }
@@ -281,8 +281,8 @@ public class Gestor {
     } // getMosaicChunk: retorna el chunk del canvasMosaic seleccionado
 
     public void setMosaicsParameters(int heigth, int width) {
-        this.rowsMosaic = heigth / size;
-        this.colsMosaic = width / size;
+        this.rowsMosaic = heigth / this.size;
+        this.colsMosaic = width / this.size;
     } // setMosaicsParameters: da valor a las variables globales del tamaño de las matrices
 
     public void setSize(int size) {
@@ -294,7 +294,7 @@ public class Gestor {
     } // getSize: retorna el valor del size de los chunks
 
     public boolean isDefinedMosaic() {
-        if (chunkMosaic != null) {
+        if (this.chunkMosaic != null) {
             return true;
         } else {
             return false;
