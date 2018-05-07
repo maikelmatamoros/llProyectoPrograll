@@ -161,6 +161,7 @@ public class Gestor {
                         gc.drawImage(SwingFXUtils.toFXImage(this.image, null), 0, 0);
                     }
                 } else {
+                    gc.clearRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
                     this.image = aux;
                     canvasImage.setHeight(this.image.getHeight());
                     canvasImage.setWidth(this.image.getWidth());
